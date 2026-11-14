@@ -9,7 +9,13 @@ def norm(t):
     return re.sub(r"[ \t]+", " ", t)
 
 def parse_panel(text):
-    """Return list of judge surnames from the 'Before ...' line."""
+    """Return list of judge surnames from the 'Before ...' line, or a Rule 36 'PER CURIAM (...)' line."""
+    r36 = re.search(r"PER CURIAM\s*\(([^)]{5,200})\)", text)
+    if r36 and re.search(r"Fed\.\s*Cir\.\s*R\.\s*36", text):
+        raw = re.sub(r"\s+", " ", r36.group(1))
+        cleaned = re.sub(r",?\s*(?:Chief|Circuit|Senior Circuit|Senior|District|Chief District|Senior District)?\s*Judges?\.?\*?", ",", raw)
+        names = [n.strip(" .*,") for n in re.split(r",|\band\b", cleaned)]
+        return [n for n in names if re.fullmatch(NAME, n)], raw
     m = re.search(r"\bBefore\s+(.{5,300}?(?:Judges?|Justice)\.?)[\s\*\d†‡]*\n", text, re.S)
     if not m:
         return None, None
@@ -41,6 +47,9 @@ def parse_separate(text):
 
 def extract(text):
     text = norm(text)
+    if re.search(r"AFFIRMED\.\s*See Fed\.\s*Cir\.\s*R\.\s*36", text):
+        panel, raw = parse_panel(text)
+        return {"panel": panel, "panel_raw": raw, "author": "PER CURIAM (RULE 36)", "separate_opinions": []}
     m = re.search(r"\bBefore\s+", text)
     panel, raw = parse_panel(text)
     end = text.find(raw.split()[-1]) + 1 if raw else (m.end() if m else 0)
@@ -69,7 +78,8 @@ def extract_more(text):
     text = norm(text)
     head = re.sub(r"\s+", " ", text[:6000])
     d = (re.search(r"Decided:?\s*([A-Z][a-z]+\.? \d{1,2},? \d{4})", head)
-         or re.search(r"OPINION ISSUED:\s*([A-Z][a-z]+\.? \d{1,2},? \d{4})", head))
+         or re.search(r"OPINION ISSUED:\s*([A-Z][a-z]+\.? \d{1,2},? \d{4})", head)
+         or re.search(r"ENTERED BY ORDER OF THE COURT\s*([A-Z][a-z]+\.? \d{1,2},? \d{4})", head))
     origin = ""
     m = re.search(r"(?:Appeal|Appeals|Petition|Petitions) (?:for review )?from (?:the )?(.{0,200})", head)
     src = m.group(1) if m else head[:3000]
