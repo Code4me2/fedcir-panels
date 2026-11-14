@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+# PDFs can always be re-downloaded from the court; too large for the repository
+pdfs/
+work/
