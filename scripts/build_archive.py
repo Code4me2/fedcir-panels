@@ -62,7 +62,8 @@ def candidate_pdf_urls(rest):
     if not m: return []
     appeal, dtype, mo, dy, yr, pid, seq = m.groups()
     date = f"{int(mo)}-{int(dy)}-{yr}"
-    if pid: return [f"{SITE}/opinions-orders/{appeal}.{dtype.upper()}.{date}_{pid}.pdf"]
+    if pid:  # 2020-21 files use lowercase, later ones uppercase; try both before the posting page
+        return [f"{SITE}/opinions-orders/{appeal}.{t}.{date}_{pid}.pdf" for t in (dtype, dtype.upper())]
     if seq: return [f"{SITE}/opinions-orders/{appeal}.{dtype}.{date}.{seq}.pdf"]
     return [f"{SITE}/opinions-orders/{appeal}.{dtype}.{date}.pdf"]
 
