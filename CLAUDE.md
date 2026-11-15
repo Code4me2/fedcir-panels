@@ -28,6 +28,10 @@ Why build it: per-judge outcome data exists in commercial tools, but this combin
 - **Superseded decisions are excluded from stats.**
 - **Decisions with no panel in the PDF (65) are left out of judge statistics** (confirmed by the owner 2026-11-15). Known gap: a January 2019 batch of Rule 36 judgments is missing from sit-together counts for that month.
 - **2-judge panels (6) count toward pair counts but not trio counts** in sit-together statistics (confirmed by the owner 2026-11-15; the two judges did sit together, but there was no trio).
+- **Issue statistics are matched to forum** (confirmed by the owner 2026-11-15). Forum (from the origin field) is stored with each issue, and the dashboard by default shows a judge's record on the chosen issue in the same forum as the case being argued (the calendar lists the origin), e.g. obviousness in PTAB appeals vs district-court appeals vs ex parte appeals.
+- **Pro se flag** (confirmed 2026-11-15): a text rule (not AI) reads the counsel listing and flags pro se parties, so the dashboard can filter them out; pro se jurisdictional dismissals would otherwise dominate veterans, employment and Court of Federal Claims records.
+- **Vacated/remanded issues favor the side that appealed on the issue actually decided** (confirmed 2026-11-15). Only issues the court decides are coded; if the court vacates for inadequate agency explanation without reaching the merits, only the explanation issue is coded.
+- **Small samples** (confirmed 2026-11-15): issues are stored at full detail; the dashboard decides at build time whether a narrow issue is shown by itself, merged into its group, or as a court-wide rate only.
 
 ## Data sources (www.cafc.uscourts.gov, allowed in the cloud environment)
 - **Do not bypass the court's bot-check.** The Opinions & Orders and recordings tables load from a wpDataTables admin-ajax feed behind an Azure WAF JavaScript challenge. Reading it with a headless browser was blocked as circumventing access protection. Don't do it. (The table's Excel/CSV export only covers the visible page and has no PDF links.)
