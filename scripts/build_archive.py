@@ -197,6 +197,14 @@ def main():
         records[k] = r; done += 1
         if done % 100 == 0: log(f"{done}/{len(decisions)} processed")
         if done % a.checkpoint == 0: save(records, not a.no_push, done)
+    # A revised/corrected opinion replaces an earlier opinion in the same appeal with the same panel (owner's decision)
+    for rv in records.values():
+        if rv.get("doc_type") == "Opinion" and re.search(r"\b(revised|corrected)\b", rv.get("case_name", "")):
+            for r in records.values():
+                if (r is not rv and r.get("doc_type") == "Opinion" and r.get("appeal_numbers") == rv["appeal_numbers"]
+                        and r.get("panel") == rv["panel"] and r.get("decided_iso", "9") <= rv["decided_iso"]
+                        and "superseded" not in r["flag"]):
+                    r["flag"] = ", ".join(filter(None, [r["flag"], "superseded by revised opinion"]))
     save(records, not a.no_push, done)
     flags = collections.Counter(f for r in records.values() for f in (r.get("flag") or "").split(", ") if f)
     log(f"DONE: {done} decisions; flags: {dict(flags)}")
