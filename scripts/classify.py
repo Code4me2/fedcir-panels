@@ -56,7 +56,8 @@ Pick the case type from this list by the nature of the dispute. Side A and Side 
 {side_lines}
 For any other private-party-vs-government case (e.g. a Little Tucker Act claim in district court), use \
 "Other petitions against an agency (DOJ, GAO, etc.)", with the private party as Side A. Name the actual \
-parties on each side in side_a_parties and side_b_parties.
+parties on each side in side_a_parties and side_b_parties. Side A and Side B come only from these \
+definitions, never from who appealed, who won below, or whose name comes first.
 
 ## Step 2: issues
 List every issue the court actually decided, using exactly one code per issue from this list:
@@ -64,8 +65,17 @@ List every issue the court actually decided, using exactly one code per issue fr
 
 Rules:
 - Code only issues the court decided. Skip issues it says it "need not reach" or does not address.
+- Do not code the court's routine statement of its own jurisdiction (e.g. "We have jurisdiction under \
+28 U.S.C. § 1295(a)(4)(A)"). Code X01 only when a party contested jurisdiction or the court itself \
+analyzed a real question about it.
+- Use codes from the group that fits the case type: P codes only in patent cases, T codes only in \
+trademark cases, V veterans, E federal employment, C government contracts, F other Court of Federal \
+Claims cases, R trade. X (procedure) codes fit any case type.
 - If the court vacates or reverses because the tribunal failed to explain itself or used the wrong procedure, \
 without deciding the merits, code only that procedural issue (e.g. X06), not the underlying merits issue.
+- If the court holds that the tribunal applied the wrong legal standard to a merits issue, that is a ruling \
+on the merits issue: use that issue's own code, not X06. \
+X06 is for failures to explain, to address an argument, or to give notice.
 - Vacated or remanded rulings favor the side that appealed on that issue.
 - If the court refuses to consider an argument as forfeited or waived, code X04 for the side that benefits, \
 not the underlying issue.
@@ -82,7 +92,9 @@ counts within the same issue; "other_unclear" when the outcome on the issue favo
 - If two distinct rulings fall under the same code (e.g. obviousness of two different patents with different \
 results), list them as separate issues.
 - dissenting_judges: surnames of panel judges who dissented on THIS issue. A judge who "concurs in part and \
-dissents in part" is listed only for the issues the dissent covers. Concurring judges are not dissenters.
+dissents in part" is listed only for the issues the dissent covers. Concurring judges are not dissenters. Read each \
+separate opinion to see which issues it disagrees with, including disagreement only about the remedy or \
+relief, which is a dissent on the issue that remedy belongs to.
 - Use X99 only when no code fits; say what the issue is in the description.
 - quote: a short verbatim sentence from the opinion that shows the court's ruling on the issue.
 
@@ -179,26 +191,26 @@ def cmd_dry_run(a):
     print(f"system prompt saved to {out.relative_to(ROOT)}")
 
 
-def batch_file(model, sample):
-    return WORK / f"batch_{Path(sample).stem}_{model}.json"
+def batch_file(model, sample, tag=""):
+    return WORK / f"batch_{Path(sample).stem}_{model}{'_' + tag if tag else ''}.json"
 
 
 def cmd_submit(a):
     issues, sides = load_lists()
     rows, text = load_sample(a.sample)
-    bf = batch_file(a.model, a.sample)
+    bf = batch_file(a.model, a.sample, a.tag)
     if bf.exists():
         sys.exit(f"already submitted: {json.loads(bf.read_text())['batch_id']} (delete {bf} to resubmit)")
     reqs = build_requests(rows, text, a.model, issues, sides)
     b = client().messages.batches.create(requests=reqs)
     bf.parent.mkdir(parents=True, exist_ok=True)
-    bf.write_text(json.dumps({"batch_id": b.id, "model": a.model, "sample": a.sample, "n": len(reqs),
+    bf.write_text(json.dumps({"batch_id": b.id, "model": a.model, "sample": a.sample, "tag": a.tag, "n": len(reqs),
                               "submitted": time.strftime("%Y-%m-%d %H:%M:%S")}))
     print(f"submitted batch {b.id} ({len(reqs)} requests, {a.model})")
 
 
 def cmd_collect(a):
-    bf = batch_file(a.model, a.sample)
+    bf = batch_file(a.model, a.sample, a.tag)
     info = json.loads(bf.read_text())
     c = client()
     while True:
@@ -209,7 +221,7 @@ def cmd_collect(a):
               flush=True)
         time.sleep(60)
     RESULTS.mkdir(exist_ok=True)
-    out = RESULTS / f"{Path(info['sample']).stem}_{a.model}.jsonl"
+    out = RESULTS / f"{Path(info['sample']).stem}_{a.model}{'_' + a.tag if a.tag else ''}.jsonl"
     tok = {"input": 0, "cache_write": 0, "cache_read": 0, "output": 0}
     problems = []
     with open(out, "w") as f:
@@ -246,6 +258,7 @@ def main():
     p.add_argument("command", choices=["dry-run", "submit", "collect"])
     p.add_argument("--sample", default="samples/classification_test_50.csv")
     p.add_argument("--model", default="claude-haiku-5-5", choices=sorted(PRICES))
+    p.add_argument("--tag", default="", help="label for a re-run, e.g. v2 (kept beside earlier results)")
     a = p.parse_args()
     {"dry-run": cmd_dry_run, "submit": cmd_submit, "collect": cmd_collect}[a.command](a)
 

@@ -23,7 +23,7 @@ P21,PTAB trial procedure,"Institution, time bar, real party in interest","Review
 P22,PTAB trial procedure,IPR estoppel (§315(e)),"Whether a petitioner is estopped from raising grounds it raised or reasonably could have raised, at the Board or in court.",estoppel applied (for patent owner),not applied (for petitioner)
 P23,PTAB trial procedure,Motions to amend and substitute claims,Whether the Board properly denied or granted amendment of claims during a trial.,amendment allowed,amendment denied
 P24,ITC,Domestic industry and other §337 requirements,"Domestic industry (technical and economic prongs), importation, and other Section 337 requirements.",requirement met,requirement not met
-T01,Trademark,Likelihood of confusion (§2(d)),DuPont factors and whether the mark is likely to cause confusion with another mark.,no confusion,confusion
+T01,Trademark,Likelihood of confusion (§2(d)),"DuPont factors and whether the mark is likely to cause confusion with another mark, incl. priority of use when decided as part of a §2(d) claim (opposition or cancellation).",no confusion,confusion
 T02,Trademark,"Descriptiveness, genericness, acquired distinctiveness","Whether the mark is merely descriptive, generic, or has acquired distinctiveness.",registrable,not registrable
 T03,Trademark,Other registration bars,"Functionality, failure to function, §2(a)-(c) bars, geographic descriptiveness or misdescriptiveness.",registrable,not registrable
 T04,Trademark,Cancellation grounds,"Fraud on the PTO, abandonment, and nonuse as grounds to cancel a registration.",registration kept,registration cancelled
@@ -57,15 +57,15 @@ R04,Trade,AD/CVD injury determinations (ITC),ITC material injury and threat dete
 R05,Trade,Customs classification (HTSUS),Correct tariff classification of imported goods.,importer's heading,government's heading
 R06,Trade,Other customs,"Valuation, country of origin, drawback and protest issues.",for importer,for government
 R07,Trade,"Tariff actions (Section 232, 301, IEEPA)",Lawfulness of presidential or agency tariff actions.,for importer,for government
-X01,Procedure (any case type),Jurisdiction,"Appellate jurisdiction, finality, the tribunal's own jurisdiction, and the limits on review of veterans' cases (§7292).",jurisdiction found,no jurisdiction
+X01,Procedure (any case type),Jurisdiction,"Appellate jurisdiction, finality, mootness, the tribunal's own jurisdiction, and the limits on review of veterans' cases (§7292).",jurisdiction found,no jurisdiction
 X02,Procedure (any case type),Standing,"Article III and statutory standing, incl. standing to appeal a PTAB decision.",standing,no standing
-X03,Procedure (any case type),"Timeliness, limitations, equitable tolling","Filing deadlines, statutes of limitation and equitable tolling.",timely,untimely
+X03,Procedure (any case type),"Timeliness, limitations, equitable tolling","Filing deadlines, statutes of limitation, equitable tolling, and laches outside patent cases.",timely,untimely
 X04,Procedure (any case type),Forfeiture and waiver,Whether an argument was preserved below or on appeal.,argument preserved,argument forfeited
 X05,Procedure (any case type),Preclusion,"Res judicata and collateral estoppel, incl. preclusion from PTAB decisions. Side = whoever invoked it.",precluded,not precluded
 X06,Procedure (any case type),Agency explanation and APA review,"Inadequate reasoning, failure to address an argument, new grounds of rejection, notice.",agency upheld,agency vacated
 X07,Procedure (any case type),Constitutional and structural challenges,"Appointments Clause, due process, Seventh Amendment and similar challenges.",challenge succeeds,challenge fails
 X08,Procedure (any case type),Pleading sufficiency (non-§101),Rule 12(b)(6) plausibility for claims other than §101 eligibility.,claim survives,claim dismissed
 X09,Procedure (any case type),Venue and transfer,"Venue and transfer rulings, incl. on mandamus.",for movant,for opposing party
-X10,Procedure (any case type),Trial and case management,"Discovery, evidence, sanctions, new trial, leave to amend and similar rulings.",for side A,for side B
+X10,Procedure (any case type),Trial and case management,"Discovery, evidence, sanctions, new trial, leave to amend, class certification and similar rulings.",for side A,for side B
 X11,Procedure (any case type),Attorney fees and costs,"§285, EAJA, CDA, Vaccine Act and other fee and cost awards.",fees awarded or upheld,fees denied or vacated
 X99,Procedure (any case type),Other,Anything not covered above; a free-text description is required. More than ~5% here in the test means a code is missing.,,

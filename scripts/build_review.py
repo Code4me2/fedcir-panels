@@ -96,6 +96,7 @@ def archive_opinion_chars():
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--sample", default="samples/classification_test_50.csv")
+    p.add_argument("--tag", default="", help="results label of a re-run, e.g. v2")
     a = p.parse_args()
     stem = Path(a.sample).stem
     cases = list(csv.DictReader(open(ROOT / a.sample)))
@@ -107,7 +108,7 @@ def main():
               for i in csv.DictReader(open(ROOT / "data/issue_list.csv"))}
     res = {}
     for m in MODELS:
-        f = ROOT / "results" / f"{stem}_{m}.jsonl"
+        f = ROOT / "results" / f"{stem}_{m}{'_' + a.tag if a.tag else ''}.jsonl"
         res[m] = {json.loads(l)["id"]: json.loads(l) for l in open(f)} if f.exists() else {}
     models = [m for m in MODELS if res[m]]
 
@@ -185,7 +186,7 @@ def main():
     ws.title = "Summary"
     n_arch, chars_arch = archive_opinion_chars()
     chars_test = sum(int(c["chars"]) for c in cases)
-    lines = [["Classification test: " + stem], [],
+    lines = [["Classification test: " + stem + (f" ({a.tag})" if a.tag else "")], [],
              ["", *[SHORT[m] for m in models]]]
     def line(label, f):
         lines.append([label, *[f(m) for m in models]])
@@ -266,7 +267,7 @@ def main():
     write_sheet(ws, ["Test", "Case", "Model", "Panel differs", "Author differs", "Dissenters differ",
                      "Separate opinions (text rules)"], xrows, [6, 30, 8, 40, 30, 40, 24])
 
-    out = ROOT / "review" / f"{stem}_review.xlsx"
+    out = ROOT / "review" / f"{stem}{'_' + a.tag if a.tag else ''}_review.xlsx"
     out.parent.mkdir(exist_ok=True)
     wb.save(out)
     print(f"saved {out.relative_to(ROOT)}")
