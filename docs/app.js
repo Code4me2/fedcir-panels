@@ -167,7 +167,31 @@ function buildPickerOptions() {
     { group: "Other", items: [[VIS, "Visiting judge (district or other court)"]] },
   ];
 }
+/* Where the judges' names came from. Until the morning panel reader exists, always the user.
+   The reader will set PANEL_FROM_COURT = { read: "<time>" } for sessions whose panel it found. */
+const PANEL_FROM_COURT = null;
+function oneHourBefore(t) {           // "10:00A.M." -> "9:00 a.m."
+  const m = /^(\d+):(\d+)([AP])/.exec(t || "");
+  if (!m) return "";
+  let hr = (+m[1] % 12) + (m[3] === "P" ? 12 : 0) - 1;
+  if (hr < 0) hr += 24;
+  return `${hr % 12 || 12}:${m[2]} ${hr < 12 ? "a.m." : "p.m."}`;
+}
+function panelTiming() {
+  const sess = currentSession();
+  if (!sess) return "";
+  const today = todayET(), when = oneHourBefore(sess.time);
+  if (sess.date > today) return `The court has not posted this panel yet: judges' names go up on its daily schedule about one hour before the session (around ${when} on ${fmtDate(sess.date)}).`;
+  if (sess.date === today) return `The court posts this panel's names on its daily schedule about one hour before the session (around ${when} today).`;
+  return "This session has passed; the court's daily schedule shows only the current day's panels.";
+}
+function renderPanelSource() {
+  const el = $("panel-source");
+  if (PANEL_FROM_COURT) { el.replaceChildren(`Judges read from the court's daily schedule at ${PANEL_FROM_COURT.read}.`); return; }
+  el.replaceChildren(h("strong", {}, "Judges entered by you – not from the court. "), panelTiming());
+}
 function renderPickers() {
+  renderPanelSource();
   const box = $("judge-pickers");
   box.replaceChildren(...[0, 1, 2].map((i) => {
     const sel = h("select", { "aria-label": `Judge ${i + 1}`, onchange: (e) => { S.j[i] = e.target.value; drillState = null; renderAll(); } },
@@ -293,7 +317,8 @@ function renderIssuePickers() {
   $("issue-covers").textContent = iss ? `${iss.issue}: ${iss.covers}` : "";
   const c = currentCase(), sess = currentSession();
   $("case-line").textContent = c ? `Case: ${c.appeal} ${c.name} (${c.origin}, ${c.argued ? "argued" : "on the briefs"}), Panel ${sess.panel}. ` +
-    "The case type is a guess from the origin and case name; change it if it is wrong." :
+    "The case type is a guess from the origin and case name; change it if it is wrong." +
+    (S.j.some(Boolean) && !PANEL_FROM_COURT ? " Judges: entered by you, not from the court." : "") :
     "No case selected: choose the case type yourself, or click a case above.";
 }
 
