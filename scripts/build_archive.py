@@ -19,6 +19,9 @@ SITE = "https://www.cafc.uscourts.gov"
 UA = {"User-Agent": "Mozilla/5.0 (fedcir-panel-research; public-records research script)"}
 START = datetime.date(2015, 1, 1)
 BACKFILL_DAY = datetime.date(2025, 3, 10)            # bulk re-posting of old decisions
+# Federal Circuit judges (active or senior) who sat 2015 on; anyone else on a panel is a visiting judge, tagged "(visiting)"
+CIRCUIT = {"PROST", "TARANTO", "LOURIE", "REYNA", "DYK", "CHEN", "HUGHES", "STOLL", "MOORE", "NEWMAN", "WALLACH", "O'MALLEY",
+           "STARK", "CUNNINGHAM", "BRYSON", "CLEVENGER", "SCHALL", "MAYER", "LINN", "PLAGER"}
 PAUSE = 1.5                                          # seconds between requests to the court
 DATE_TAIL = r"-(\d{1,2})-(\d{1,2})-(\d{2,4})(?:_(\d+)|-(\d+))?$"
 
@@ -88,6 +91,7 @@ def key_for(post):
     return re.sub(r"[^a-z0-9]+", "_", post["slug"])[:180]
 
 def parse_date(s):
+    if re.fullmatch(r"\d{2}/\d{2}/\d{4}", s): return datetime.datetime.strptime(s, "%m/%d/%Y").date()
     try: return datetime.datetime.strptime(s.replace(".", "").replace(",", ""), "%B %d %Y").date()
     except (ValueError, AttributeError): return None
 
@@ -161,14 +165,26 @@ def main():
         except Exception as ex:
             r["flag"] = f"download/extract error: {ex!r}"[:200]; records[k] = r; done += 1; log(f"ERROR {k}: {ex!r}"); continue
 
-        decided = parse_date(r["decided"]); r["decided_iso"] = str(decided) if decided else ""
+        decided = parse_date(r["decided"])
+        if not decided and p["posted"]: decided = p["posted"]; r["decided"] = f"{decided} (posting date)"  # rare: no date in the text
+        r["decided_iso"] = str(decided) if decided else ""
         nums = r["appeal_numbers"].split("; ") if r["appeal_numbers"] else []
         dates = sorted(d for n in nums for d in argued_date.get(n, []) if decided and d <= decided)
         r["argued"] = str(dates[-1]) if dates else ("yes (date unknown)" if any(argued_any.get(n) for n in nums) else "")
         r["days_to_decision"] = (decided - dates[-1]).days if dates else ""
-        panel = r["panel"].split("; ") if r["panel"] else []
+        panel = [j if j in CIRCUIT or j.endswith(")") else j + " (visiting)" for j in (r["panel"].split("; ") if r["panel"] else [])]
+        r["panel"] = "; ".join(panel)
+        def on_panel(name):  # match "MOORE" to "MOORE (DJ)" when only the visiting judge has that name
+            hits = [j for j in panel if j.split(" (")[0] == name]
+            return hits[0] if len(hits) == 1 else None
+        if r["author"] and not r["author"].startswith("PER CURIAM") and on_panel(r["author"]): r["author"] = on_panel(r["author"])
+        r["separate_opinions"] = "; ".join(f"{s.split(': ')[0]}: {on_panel(s.split(': ')[-1]) or s.split(': ')[-1]}"
+                                           for s in r["separate_opinions"].split("; ") if s)
         probs = []
-        if len(panel) != 3: probs.append("panel")
+        if not panel: probs.append("panel not found")
+        elif len(panel) > 3: probs.append("en banc" if len(panel) >= 6 else "panel")
+        elif len(panel) == 2: probs.append("2-judge panel")
+        elif len(panel) != 3: probs.append("panel")
         if not r["author"]: probs.append("author")
         elif not r["author"].startswith("PER CURIAM") and r["author"] not in panel: probs.append("author not on panel")
         for s in r["separate_opinions"].split("; "):
