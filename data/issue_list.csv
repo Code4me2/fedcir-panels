@@ -1,0 +1,71 @@
+code,group,issue,covers,side_a_label,side_b_label
+P01,Patent validity,Patent eligibility (§101),"Whether the claims are directed to patent-eligible subject matter (Alice/Mayo), incl. §101 decided on the pleadings.",eligible,ineligible
+P02,Patent validity,Anticipation (§102),Whether a single prior-art reference discloses every claim limitation.,not anticipated,anticipated
+P03,Patent validity,Obviousness (§103),"Whether the claims would have been obvious, incl. motivation to combine, reasonable expectation of success and objective indicia.",nonobvious,obvious
+P04,Patent validity,Written description (§112(a)),Whether the specification shows possession of the claimed invention.,adequate,inadequate
+P05,Patent validity,Enablement (§112(a)),Whether the specification enables the full scope of the claims without undue experimentation.,enabled,not enabled
+P06,Patent validity,Indefiniteness (§112(b)),"Whether the claims are reasonably certain, incl. means-plus-function claims lacking corresponding structure.",definite,indefinite
+P07,Patent validity,Prior-art status and priority date,"Whether a reference or activity qualifies as prior art (printed publication, on-sale bar, public use) or the claims are entitled to an earlier date.",not prior art / earlier date,prior art / later date
+P08,Patent validity,Obviousness-type double patenting,Whether claims are invalid over the patentee's own earlier patent.,valid,invalid
+P09,Patent validity,Inventorship,"Correct inventorship, correction under §256, and derivation-type inventorship disputes.",patent owner's position,challenger's position
+P10,Patent validity,"Reissue, recapture, certificates of correction","Validity of reissue claims, the recapture rule, and certificates of correction.",upheld,rejected
+P11,Claim scope and infringement,Claim construction,"Meaning of disputed claim terms, coded by its effect on the judgment (e.g. a vacated noninfringement judgment favors the patent owner).",pro-patent owner,pro-challenger
+P12,Claim scope and infringement,Literal infringement,"Whether the accused product or process meets every limitation, incl. §271(e) and extraterritoriality.",infringed,not infringed
+P13,Claim scope and infringement,Doctrine of equivalents,"Infringement by equivalents and limits on it (prosecution history estoppel, dedication-disclosure, vitiation).",infringed,not infringed
+P14,Claim scope and infringement,"Induced, contributory and divided infringement","Liability for inducing or contributing to infringement, and joint/divided infringement.",liable,not liable
+P15,Patent defenses and remedies,"Inequitable conduct, unclean hands",Whether the patent is unenforceable for misconduct before the PTO or in litigation.,enforceable,unenforceable
+P16,Patent defenses and remedies,"License, exhaustion, laches, equitable estoppel","Defenses based on a license, patent exhaustion, laches or equitable estoppel.",defense rejected,defense upheld
+P17,Patent defenses and remedies,Damages: amount and method,"Reasonable royalty, lost profits, apportionment, damages experts, marking and notice (§287).",for patent owner,for accused infringer
+P18,Patent defenses and remedies,Willfulness and enhanced damages,Willful infringement findings and enhanced damages under §284.,for patent owner,for accused infringer
+P19,Patent defenses and remedies,Injunctions,"Preliminary and permanent injunctions (eBay factors, likelihood of success).",granted or upheld,denied or vacated
+P20,Patent defenses and remedies,"Patent licensing, assignment and ownership","Contract disputes over patent licenses, royalties, assignments and title.",party claiming patent rights,opposing party
+P21,PTAB trial procedure,"Institution, time bar, real party in interest","Reviewability of institution, the §315(b) time bar, real-party-in-interest and related threshold rulings.",for patent owner,for petitioner
+P22,PTAB trial procedure,IPR estoppel (§315(e)),"Whether a petitioner is estopped from raising grounds it raised or reasonably could have raised, at the Board or in court.",estoppel applied (for patent owner),not applied (for petitioner)
+P23,PTAB trial procedure,Motions to amend and substitute claims,Whether the Board properly denied or granted amendment of claims during a trial.,amendment allowed,amendment denied
+P24,ITC,Domestic industry and other §337 requirements,"Domestic industry (technical and economic prongs), importation, and other Section 337 requirements.",requirement met,requirement not met
+T01,Trademark,Likelihood of confusion (§2(d)),DuPont factors and whether the mark is likely to cause confusion with another mark.,no confusion,confusion
+T02,Trademark,"Descriptiveness, genericness, acquired distinctiveness","Whether the mark is merely descriptive, generic, or has acquired distinctiveness.",registrable,not registrable
+T03,Trademark,Other registration bars,"Functionality, failure to function, §2(a)-(c) bars, geographic descriptiveness or misdescriptiveness.",registrable,not registrable
+T04,Trademark,Cancellation grounds,"Fraud on the PTO, abandonment, and nonuse as grounds to cancel a registration.",registration kept,registration cancelled
+V01,Veterans,Interpretation of benefit statutes and regulations,Meaning of a Title 38 statute or VA regulation (a question of law within the court's review).,veteran's reading,VA's reading
+V02,Veterans,Service connection and presumptions,"Legal standards for service connection, including presumptive conditions (e.g. herbicide exposure).",for veteran,for VA
+V03,Veterans,Effective dates,The date from which benefits are payable.,earlier date,later date
+V04,Veterans,Clear and unmistakable error (CUE),Whether a final VA decision contains CUE warranting revision.,error found,no error
+V05,Veterans,"Duty to assist, notice, benefit of the doubt",VA's procedural duties to the claimant and the benefit-of-the-doubt rule.,for veteran,for VA
+E01,Federal employment,Adverse action merits,Whether the agency proved the charge and nexus to the efficiency of the service.,for employee,for agency
+E02,Federal employment,Penalty reasonableness,Whether the penalty was reasonable under the Douglas factors.,penalty reduced,penalty sustained
+E03,Federal employment,Whistleblower reprisal,"Protected disclosure, contributing factor, and the agency's clear-and-convincing defense.",for employee,for agency
+E04,Federal employment,"Discrimination, USERRA, veterans' preference","Discrimination affirmative defenses, USERRA and VEOA claims.",for employee,for agency
+E05,Federal employment,"Retirement, disability and survivor annuities","Entitlement to FERS/CSRS retirement, disability retirement or survivor annuities.",for annuitant,for OPM
+E06,Federal employment,Due process and harmful procedural error,Whether the employee received required process and whether a procedural error was harmful.,for employee,for agency
+E07,Federal employment,Pay statutes,"Back Pay Act, FLSA, locality and other pay claims by federal employees.",for employee,for government
+C01,Government contracts,Contract interpretation,Meaning of contract terms and the parties' obligations.,contractor's reading,government's reading
+C02,Government contracts,Bid protest merits,Whether the procurement decision was arbitrary or unlawful and whether the protester was prejudiced.,protest sustained,protest denied
+C03,Government contracts,Termination for default or convenience,Whether a termination was proper and its consequences.,for contractor,for government
+C04,Government contracts,Contract Disputes Act claim requirements,"Certification, sum certain, same-claim and other CDA claim requirements.",requirements met,requirements not met
+C05,Government contracts,"Quantum, equitable adjustment, contract defenses","Amount recoverable, equitable adjustments, and defenses such as sovereign acts or accord and satisfaction.",for contractor,for government
+F01,Other Court of Federal Claims,Takings,"Physical and regulatory takings, incl. rails-to-trails cases.",taking found,no taking
+F02,Other Court of Federal Claims,Tax refunds,Federal tax refund suits.,for taxpayer,for government
+F03,Other Court of Federal Claims,"Military pay, discharge, disability retirement","Military pay, wrongful discharge and military disability retirement claims.",for service member,for government
+F04,Other Court of Federal Claims,Vaccine Act: entitlement and causation,Whether the vaccine caused the injury (Althen) or a Table injury is shown.,compensated,not compensated
+F05,Other Court of Federal Claims,Vaccine Act: other,"Vaccine Act timeliness, procedure and other non-causation issues.",for petitioner,for government
+F06,Other Court of Federal Claims,Other money claims,"Illegal exaction, judicial pay, tribal trust and other Tucker Act money claims.",for claimant,for government
+R01,Trade,AD/CVD margin and subsidy calculation,Commerce's methodology for dumping margins and subsidy rates.,lower duties,higher duties
+R02,Trade,AD/CVD adverse facts available,Whether Commerce properly applied adverse facts available and the rate selected.,not applied or limited,upheld
+R03,Trade,AD/CVD scope rulings,Whether a product falls within the scope of an antidumping or countervailing duty order.,outside the order,inside the order
+R04,Trade,AD/CVD injury determinations (ITC),ITC material injury and threat determinations.,no injury,injury
+R05,Trade,Customs classification (HTSUS),Correct tariff classification of imported goods.,importer's heading,government's heading
+R06,Trade,Other customs,"Valuation, country of origin, drawback and protest issues.",for importer,for government
+R07,Trade,"Tariff actions (Section 232, 301, IEEPA)",Lawfulness of presidential or agency tariff actions.,for importer,for government
+X01,Procedure (any case type),Jurisdiction,"Appellate jurisdiction, finality, the tribunal's own jurisdiction, and the limits on review of veterans' cases (§7292).",jurisdiction found,no jurisdiction
+X02,Procedure (any case type),Standing,"Article III and statutory standing, incl. standing to appeal a PTAB decision.",standing,no standing
+X03,Procedure (any case type),"Timeliness, limitations, equitable tolling","Filing deadlines, statutes of limitation and equitable tolling.",timely,untimely
+X04,Procedure (any case type),Forfeiture and waiver,Whether an argument was preserved below or on appeal.,argument preserved,argument forfeited
+X05,Procedure (any case type),Preclusion,"Res judicata and collateral estoppel, incl. preclusion from PTAB decisions. Side = whoever invoked it.",precluded,not precluded
+X06,Procedure (any case type),Agency explanation and APA review,"Inadequate reasoning, failure to address an argument, new grounds of rejection, notice.",agency upheld,agency vacated
+X07,Procedure (any case type),Constitutional and structural challenges,"Appointments Clause, due process, Seventh Amendment and similar challenges.",challenge succeeds,challenge fails
+X08,Procedure (any case type),Pleading sufficiency (non-§101),Rule 12(b)(6) plausibility for claims other than §101 eligibility.,claim survives,claim dismissed
+X09,Procedure (any case type),Venue and transfer,"Venue and transfer rulings, incl. on mandamus.",for movant,for opposing party
+X10,Procedure (any case type),Trial and case management,"Discovery, evidence, sanctions, new trial, leave to amend and similar rulings.",for side A,for side B
+X11,Procedure (any case type),Attorney fees and costs,"§285, EAJA, CDA, Vaccine Act and other fee and cost awards.",fees awarded or upheld,fees denied or vacated
+X99,Procedure (any case type),Other,Anything not covered above; a free-text description is required. More than ~5% here in the test means a code is missing.,,

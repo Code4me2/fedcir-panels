@@ -1,0 +1,13 @@
+case_type,side_a,side_b,note
+Patent: district court and ITC,"Patent owner (incl. exclusive licensee, ITC complainant)","Accused infringer (incl. declaratory-judgment plaintiff, ITC respondent)",
+"Patent: PTAB trials (IPR, PGR, CBM) and inter partes reexams",Patent owner,Petitioner / reexam requester,"If the PTO intervenes, it is not treated as a side."
+Patent: ex parte appeals and ex parte reexams,Applicant / patent owner,PTO,"Always shown filtered by forum, so these never mix with IPR or district-court results."
+"Interferences, derivation",No side (coded other/unclear),,
+Trademark,Applicant / registrant / mark owner,"Opposer, cancellation petitioner, PTO, or accused infringer",
+Veterans,Veteran / claimant,VA,
+"Federal employment (MSPB, arbitrator, OCWR, back-pay claims)",Employee / applicant / annuitant,"Agency, OPM or MSPB",
+"Government contracts (boards, CFC, bid protests)",Contractor / protester,Government (plus the intervening awardee in a bid protest),
+"Other Court of Federal Claims (takings, tax, military pay, vaccine, misc.)",Claimant,Government,
+Trade: antidumping/countervailing duties,"Lower duties (foreign producer, importer)",Higher duties (domestic industry),"Sides defined by duty outcome, not by party, because Commerce may have ruled either way."
+"Trade: customs, tariff actions",Importer,Government,
+"Other petitions against an agency (DOJ, GAO, etc.)",Petitioner,Government,
