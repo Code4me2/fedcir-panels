@@ -156,7 +156,7 @@ def build_requests(rows, text, model, issues, sides):
     for r in rows:
         user = (f"Case: {r['case_name']} (Appeal No. {r['appeal_numbers']}), decided {r['decided_iso']}, "
                 f"origin code {r['origin']}.\n\nOpinion text:\n\n{text[r['key']]}")
-        reqs.append({"custom_id": r.get("test_id") or r["key"][:64],
+        reqs.append({"custom_id": r.get("id") or r.get("test_id") or r["key"][:64],
                      "params": {"model": model, "max_tokens": MAX_TOKENS, "system": system,
                                 "output_config": fmt, "messages": [{"role": "user", "content": user}]}})
     return reqs
@@ -192,7 +192,10 @@ def cmd_dry_run(a):
 
 
 def batch_file(model, sample, tag=""):
-    return WORK / f"batch_{Path(sample).stem}_{model}{'_' + tag if tag else ''}.json"
+    """Batch ids are kept in results/batches/ (committed), so a later session can collect them."""
+    name = f"batch_{Path(sample).stem}_{model}{'_' + tag if tag else ''}.json"
+    old = WORK / name  # the test runs kept them in work/ (not committed)
+    return old if old.exists() else RESULTS / "batches" / name
 
 
 def cmd_submit(a):
@@ -222,11 +225,13 @@ def cmd_collect(a):
         time.sleep(60)
     RESULTS.mkdir(exist_ok=True)
     out = RESULTS / f"{Path(info['sample']).stem}_{a.model}{'_' + a.tag if a.tag else ''}.jsonl"
+    keys = {r.get("id") or r.get("test_id"): r["key"] for r in csv.DictReader(open(ROOT / info["sample"]))}
     tok = {"input": 0, "cache_write": 0, "cache_read": 0, "output": 0}
     problems = []
     with open(out, "w") as f:
         for res in c.messages.batches.results(info["batch_id"]):
-            rec = {"id": res.custom_id, "model": a.model, "status": res.result.type}
+            rec = {"id": res.custom_id, "key": keys.get(res.custom_id, ""), "model": a.model,
+                   "status": res.result.type}
             if res.result.type == "succeeded":
                 m = res.result.message
                 u = m.usage
