@@ -6,7 +6,8 @@ Match each decision to its argument recording (if any) to get the argument date.
 
 Resumable: documents already downloaded are skipped. Saves progress to GitHub every N documents.
 
-Usage: python3 scripts/build_archive.py [--limit N] [--checkpoint 500] [--no-push]
+Usage: python3 scripts/build_archive.py [--limit N] [--checkpoint 500] [--no-push] [--extract-only]
+  --extract-only  re-run the text rules on saved text, no downloads (rebuilds work/text from data/text if missing)
 """
 import argparse, collections, csv, datetime, gzip, json, os, re, subprocess, sys, time, urllib.error, urllib.request
 sys.path.insert(0, os.path.dirname(__file__))
@@ -98,7 +99,7 @@ def parse_date(s):
 def save(records, push, n_done):
     """Write decisions.csv and packed text files into the repository, then commit and push."""
     data_dir = os.path.join(REPO, "data"); os.makedirs(os.path.join(data_dir, "text"), exist_ok=True)
-    cols = ["key", "decided", "doc_type", "appeal_numbers", "case_name", "origin", "precedential", "panel", "author",
+    cols = ["key", "decided", "decided_iso", "doc_type", "appeal_numbers", "case_name", "origin", "precedential", "panel", "author",
             "separate_opinions", "argued", "days_to_decision", "flag", "panel_line", "pdf_url", "posted", "posting_url"]
     rows = sorted(records.values(), key=lambda r: (r.get("decided_iso") or "", r["key"]))
     with open(os.path.join(data_dir, "decisions.csv"), "w", newline="") as f:
@@ -142,6 +143,15 @@ def main():
     decisions = [p for p in posts if p["kind"] in ("opinion", "rule36") and p["posted"] >= START and p["posted"] != BACKFILL_DAY]
     if a.limit: decisions = decisions[:: max(1, len(decisions) // a.limit)][: a.limit]
     log(f"{len(decisions)} decision postings to process")
+
+    if a.extract_only and not os.listdir(TXT_DIR):  # fresh session: rebuild the text cache from the copy saved in data/
+        urls = {r["key"]: r.get("pdf_url", "") for r in csv.DictReader(open(os.path.join(REPO, "data/decisions.csv")))}
+        for f in sorted(os.listdir(os.path.join(REPO, "data/text"))):
+            for line in gzip.open(os.path.join(REPO, "data/text", f), "rt"):
+                d = json.loads(line)
+                open(os.path.join(TXT_DIR, d["key"] + ".txt"), "w").write(d["text"])
+                open(os.path.join(TXT_DIR, d["key"] + ".url"), "w").write(urls.get(d["key"], ""))
+        log(f"restored {len(os.listdir(TXT_DIR)) // 2} texts from data/text")
 
     records, done = {}, 0
     for p in decisions:
