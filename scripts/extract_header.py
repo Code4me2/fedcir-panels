@@ -86,10 +86,10 @@ ORIGINS = [
     ("DCT", r"United States District Court"),
     ("CFC", r"Court of Federal Claims"),
     ("CAVC", r"Court of Appeals for Veterans Claims"),
-    ("MSPB", r"Merit Systems Protection Board"),
+    ("MSPB", r"Merit Systems Protection"),
     ("CIT", r"Court of International Trade"),
     ("BCA", r"Board of Contract Appeals"),
-    ("ARB", r"arbitrator"),
+    ("ARB", r"[Aa]rbitrat"),
 ]
 
 def extract_more(text):
@@ -100,18 +100,31 @@ def extract_more(text):
          or re.search(r"ENTERED BY ORDER OF THE COURT\s*([A-Z][a-z]+\.? \d{1,2},? \d{4})", head)
          or re.search(r"Filed: (\d{2}/\d{2}/\d{4})", head))   # court's filing stamp, used when the text gives no date
     origin = ""
-    m = re.search(r"(?:Appeal|Appeals|Petition|Petitions) (?:for review )?from (?:the )?(.{0,200})", head)
-    src = m.group(1) if m else head[:3000]
-    for code, pat in ORIGINS:
-        if re.search(pat, src):
-            origin = code; break
+    # The caption line: "Appeal from …", "Petition for review of …" (MSPB, arbitrators),
+    # "On Petition for Writ of Mandamus to …".
+    m = re.search(r"(?:Appeal|Appeals|Petition|Petitions) (?:for review |for (?:a )?Writ of Mandamus )?(?:from|of|to) (?:the )?(.{0,200})", head)
+    if m:
+        for code, pat in ORIGINS:
+            if re.search(pat, m.group(1)):
+                origin = code; break
+    r = None
     if not origin:  # direct petitions against an agency (VA rules, DOJ benefits, congressional workplace, GAO)
         r = re.search(r"v\. ([A-Z][A-Z ,.'&]+?), (?:Respondent|Cross-Applicant)", head)
         if r:
             agency = r.group(1)
             origin = ("VA" if "VETERANS" in agency else "DOJ" if "JUSTICE" in agency else
                       "OCWR" if re.search(r"COMPLIANCE|CONGRESSIONAL WORKPLACE", agency) else
-                      "GAO" if "ACCOUNTABILITY" in agency else "AGENCY")
+                      "GAO" if "ACCOUNTABILITY" in agency else "")
+    if not origin and not m:
+        # No caption line: scan the first page. District court goes last, because a visiting
+        # district judge's "sitting by designation" footnote names a United States District Court.
+        for code, pat in [o for o in ORIGINS if o[0] != "DCT"] + [o for o in ORIGINS if o[0] == "DCT"]:
+            if re.search(pat, head[:3000]):
+                origin = code; break
+    if not origin and re.search(r"Office of Compliance|Office of Congressional Workplace Rights", head[:3000]):
+        origin = "OCWR"
+    if not origin and r:
+        origin = "AGENCY"
     return {
         "decided": d.group(1) if d else "",
         "precedential": "Nonprecedential" if re.search(r"This disposition is nonprecedential", head, re.I) else "Precedential",
