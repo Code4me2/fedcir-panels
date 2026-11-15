@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Federal Circuit Panels</title>
+<meta name="description" content="For each Federal Circuit argument session: how often the panel's judges have sat together, how each has voted on the issue you choose compared with the whole court, authorship and time to decision.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="wrap">
+  <h1>Federal Circuit Panels</h1>
+  <p class="lede">Pick an argument session and the three judges on the panel. The court posts the judges' names on its
+    <a href="https://www.cafc.uscourts.gov/home/oral-argument/daily-schedule/" target="_blank" rel="noopener">daily schedule</a>
+    about one hour before argument.</p>
+  <p class="status" id="status">Loading…</p>
+  <div class="banner" id="test-banner" hidden></div>
+</header>
+
+<main class="wrap">
+  <section aria-labelledby="h-session">
+    <h2 id="h-session">1. Session</h2>
+    <div class="controls">
+      <label>Date <select id="date"></select></label>
+      <label>Session <select id="session"></select></label>
+    </div>
+    <div class="scroll"><table class="cases" id="cases"></table></div>
+    <p class="hint">Click a case to look at its issues below. Calendar: <span id="cal-source"></span></p>
+  </section>
+
+  <section aria-labelledby="h-panel">
+    <h2 id="h-panel">2. Panel</h2>
+    <div class="controls" id="judge-pickers"></div>
+    <div id="together"></div>
+  </section>
+
+  <section aria-labelledby="h-judges">
+    <h2 id="h-judges">3. Judges</h2>
+    <div class="controls">
+      <label>Decisions from <select id="since"></select></label>
+      <label class="check"><input type="checkbox" id="pro-se" checked> Leave out cases with a pro se party</label>
+    </div>
+    <div class="scroll"><table class="stats" id="judges"></table></div>
+    <p class="hint" id="judges-note"></p>
+  </section>
+
+  <section aria-labelledby="h-issue">
+    <h2 id="h-issue">4. Votes on an issue</h2>
+    <p class="hint" id="case-line">No case selected: choose the case type yourself, or click a case above.</p>
+    <div class="controls">
+      <label>Case type <select id="ctype"></select></label>
+      <label class="wide">Issue <select id="issue"></select></label>
+      <label class="check"><input type="checkbox" id="same-type" checked> Only this case type</label>
+    </div>
+    <p class="hint" id="issue-covers"></p>
+    <div class="legend" id="legend"></div>
+    <div class="scroll"><table class="stats votes" id="votes"></table></div>
+    <h3 id="group-title"></h3>
+    <div class="scroll"><table class="stats votes" id="group-votes"></table></div>
+    <div id="drill"></div>
+  </section>
+
+  <section aria-labelledby="h-method" class="method">
+    <h2 id="h-method">How the numbers are made</h2>
+    <div id="method"></div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Source: opinions, Rule 36 judgments, argument recordings and calendars posted by the U.S. Court of Appeals for the
+    Federal Circuit on its website. Not affiliated with the court. Not legal advice.</p>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>

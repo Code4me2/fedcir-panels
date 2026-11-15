@@ -31,7 +31,7 @@ def parse_panel(text):
         if r36:
             raw = re.sub(r"\s+", " ", r36.group(1))
             return split_names(raw), raw
-    for m in re.finditer(r"\bBefore[,:]?\s+(?=[A-Z][A-Za-z']+,? )(.{5,600}?(?:Judges?|Justice)\s?[\*∗\d†‡]*(?:\.|(?=\s*\n)))", text, re.S):
+    for m in re.finditer(r"\bBefore[,:]?\s+(?=[A-Z][A-Za-z']+,? )(.{5,600}?(?:Judges?|Justice)\s?[\*∗\d†‡]*(?:\.|(?=\s*\n(?!\s*and\b))))", text, re.S):
         raw = re.sub(r"\s+", " ", m.group(1))
         if not re.match(r"[A-Z][A-Z']", raw):  # mixed-case line ("Before Prost, Chief Judge, ..."): accept only if it is names and titles
             leftover = re.sub(rf"{TITLE_PHRASE}|\b(?:and|And)\b|[A-Z][a-z'\-]+(?: [A-Z][a-z'\-]+)?|[,.\s\*∗\d]", "", raw)

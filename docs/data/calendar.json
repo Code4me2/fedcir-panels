@@ -1,0 +1,1005 @@
+{
+ "read": "2026-11-15 17:17 UTC",
+ "calendars": [
+  {
+   "source": "https://www.cafc.uscourts.gov/wp-content/uploads/OralArguments/PublicCalendar-December2026.pdf",
+   "revised": "November 13, 2026",
+   "sessions": 13
+  },
+  {
+   "source": "https://www.cafc.uscourts.gov/wp-content/uploads/OralArguments/PublicCalendar-November2026.pdf",
+   "revised": "November 9, 2026",
+   "sessions": 13
+  }
+ ],
+ "sessions": [
+  {
+   "panel": "A",
+   "date": "2026-11-02",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1354",
+     "origin": "PTO",
+     "name": "American Honda Motor Co., Inc. v. Neo Wireless LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1674",
+     "origin": "CIT",
+     "name": "PT. Zinus Global Indonesia v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-1821",
+     "origin": "DCT",
+     "name": "General Electric Company v. LPP Combustion, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1982",
+     "origin": "DCT",
+     "name": "Enovsys LLC v. Uber Technologies, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1012",
+     "origin": "MSPB",
+     "name": "Green v. MSPB",
+     "argued": false
+    },
+    {
+     "appeal": "26-1814",
+     "origin": "CFC",
+     "name": "Ellis v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "B",
+   "date": "2026-11-02",
+   "time": "10:00A.M.",
+   "courtroom": "203",
+   "cases": [
+    {
+     "appeal": "25-1319",
+     "origin": "PTO",
+     "name": "Orckit Corp. v. Cisco Systems, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1661",
+     "origin": "PTO",
+     "name": "In Re Jefferson Street Holdings LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-2037",
+     "origin": "PTO",
+     "name": "In Re Jefferson Street Holdings LLC",
+     "argued": true
+    },
+    {
+     "appeal": "26-1008",
+     "origin": "PTO",
+     "name": "In Re Jefferson Street Holdings LLC",
+     "argued": true
+    },
+    {
+     "appeal": "26-1198",
+     "origin": "MSPB",
+     "name": "McFadden v. DHS",
+     "argued": false
+    },
+    {
+     "appeal": "26-1495",
+     "origin": "MSPB",
+     "name": "McFadden v. DHS",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "C",
+   "date": "2026-11-03",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1451",
+     "origin": "CAVC",
+     "name": "Monette v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1465",
+     "origin": "PTO",
+     "name": "In Re Jiaxing Super Lighting Electric Appliance Co. Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1616",
+     "origin": "ITC",
+     "name": "Vicor Corporation v. ITC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1651",
+     "origin": "DCT",
+     "name": "Robocast, Inc. v. Netflix, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1222",
+     "origin": "CFC",
+     "name": "Brandenburg v. US",
+     "argued": false
+    },
+    {
+     "appeal": "26-1742",
+     "origin": "MSPB",
+     "name": "May v. DOJ",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "D",
+   "date": "2026-11-03",
+   "time": "10:00A.M.",
+   "courtroom": "203",
+   "cases": [
+    {
+     "appeal": "25-1355",
+     "origin": "DCT",
+     "name": "Heron Therapeutics, Inc. v. Fresenius Kabi USA, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1796",
+     "origin": "PTO",
+     "name": "Buergofol GmbH v. Omega Liner Company, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1830",
+     "origin": "DCT",
+     "name": "Fraud Free Transactions LLC v. Ping Identity Corp.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2024",
+     "origin": "BCA",
+     "name": "Walsh Turner Joint Venture II v. Secretary of the Army",
+     "argued": true
+    },
+    {
+     "appeal": "26-1373",
+     "origin": "CAVC",
+     "name": "Proceviat v. Collins",
+     "argued": false
+    },
+    {
+     "appeal": "26-1800",
+     "origin": "MSPB",
+     "name": "Simpson v. DVA",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "E",
+   "date": "2026-11-04",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1068",
+     "origin": "CAVC",
+     "name": "Frazier v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1364",
+     "origin": "PTO",
+     "name": "Digital Broadcasting Solutions, LLC v. DISH Network L.L.C.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1549",
+     "origin": "MSPB",
+     "name": "Khaghani v. Navy",
+     "argued": false
+    },
+    {
+     "appeal": "26-1633",
+     "origin": "CFC",
+     "name": "Cullerton v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "F",
+   "date": "2026-11-04",
+   "time": "10:00A.M.",
+   "courtroom": "203",
+   "cases": [
+    {
+     "appeal": "24-1780",
+     "origin": "CAVC",
+     "name": "Robinson v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1363",
+     "origin": "MSPB",
+     "name": "Kroenung v. Defense",
+     "argued": true
+    },
+    {
+     "appeal": "25-1702",
+     "origin": "DCT",
+     "name": "Finjan LLC v. Palo Alto Networks, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1715",
+     "origin": "PTO",
+     "name": "Centripetal Networks, LLC v. Keysight Technologies, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1541",
+     "origin": "CFC",
+     "name": "George v. US",
+     "argued": false
+    },
+    {
+     "appeal": "26-1574",
+     "origin": "CAVC",
+     "name": "Holland v. Collins",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "G",
+   "date": "2026-11-05",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1424",
+     "origin": "PTO",
+     "name": "Arista Networks, Inc. v. Corrigent Corp.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2036",
+     "origin": "DCT",
+     "name": "Corrigent Corp. v. Cisco Systems, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1808",
+     "origin": "DCT",
+     "name": "Terracino v. Trimaco, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1581",
+     "origin": "DCT",
+     "name": "Arbutus Biopharma Corporation v. Moderna, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1564",
+     "origin": "MSPB",
+     "name": "Weber v. MSPB",
+     "argued": false
+    },
+    {
+     "appeal": "26-1774",
+     "origin": "CFC",
+     "name": "Banks v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "H",
+   "date": "2026-11-05",
+   "time": "10:00A.M.",
+   "courtroom": "203",
+   "cases": [
+    {
+     "appeal": "25-1293",
+     "origin": "CAVC",
+     "name": "Powell v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1338",
+     "origin": "PTO",
+     "name": "Sonos, Inc. v. Google LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1780",
+     "origin": "DCT",
+     "name": "The Green Pet Shop Enterprises, LLC v. Comfort Revolution",
+     "argued": true
+    },
+    {
+     "appeal": "25-1840",
+     "origin": "DCT",
+     "name": "Ingenus Pharmaceuticals, LLC v. Nexus Pharmaceuticals, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1288",
+     "origin": "MSPB",
+     "name": "Lentz v. Interior",
+     "argued": false
+    },
+    {
+     "appeal": "26-1912",
+     "origin": "CFC",
+     "name": "Bass v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "I",
+   "date": "2026-11-06",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1545",
+     "origin": "CAVC",
+     "name": "Surratt v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1627",
+     "origin": "PTO",
+     "name": "Institut de Cardiologie de Montreal v. Murray & Poole Enterprises Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1640",
+     "origin": "DCT",
+     "name": "UUSI, LLC v. Samsung Electronics Co., Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2097",
+     "origin": "CAVC",
+     "name": "Dodson v. Collins",
+     "argued": false
+    },
+    {
+     "appeal": "26-1580",
+     "origin": "MSPB",
+     "name": "Valdez v. OPM",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "J",
+   "date": "2026-11-06",
+   "time": "10:00A.M.",
+   "courtroom": "203",
+   "cases": [
+    {
+     "appeal": "25-1643",
+     "origin": "PTO",
+     "name": "Genexa, Inc. v. KinderFarms, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1645",
+     "origin": "PTO",
+     "name": "Aesthetics Biomedical, Inc. v. Sung Hwan E&B Co. Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1657",
+     "origin": "OCWR",
+     "name": "Dines v. OCWR",
+     "argued": true
+    },
+    {
+     "appeal": "26-1481",
+     "origin": "CAVC",
+     "name": "Rezba v. Collins",
+     "argued": false
+    },
+    {
+     "appeal": "26-1704",
+     "origin": "MSPB",
+     "name": "Bruzzese v. MSPB",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "K",
+   "date": "2026-11-09",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1262",
+     "origin": "ITC",
+     "name": "Medytox, Inc. v. ITC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1525",
+     "origin": "PTO",
+     "name": "VL Collective IP, LLC v. Netflix, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1883",
+     "origin": "DCT",
+     "name": "Kaotica IP Corp. v. Iconic Mars Corporation",
+     "argued": true
+    },
+    {
+     "appeal": "25-1767",
+     "origin": "CAVC",
+     "name": "Lavens v. Collins",
+     "argued": false
+    },
+    {
+     "appeal": "26-1643",
+     "origin": "MSPB",
+     "name": "Brown v. Defense",
+     "argued": false
+    },
+    {
+     "appeal": "26-1948",
+     "origin": "CFC",
+     "name": "Zahler v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "L",
+   "date": "2026-11-09",
+   "time": "10:00A.M.",
+   "courtroom": "203",
+   "cases": [
+    {
+     "appeal": "24-1894",
+     "origin": "DCT",
+     "name": "Natera, Inc. v. CareDx, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1413",
+     "origin": "CAVC",
+     "name": "Gill v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1777",
+     "origin": "MSPB",
+     "name": "Hendricks v. DHS",
+     "argued": true
+    },
+    {
+     "appeal": "25-1875",
+     "origin": "DCT",
+     "name": "Acadia Pharmaceuticals Inc. v. Aurobindo Pharma Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1509",
+     "origin": "CFC",
+     "name": "McCaster v. US",
+     "argued": false
+    },
+    {
+     "appeal": "26-1515",
+     "origin": "DOJ",
+     "name": "Weston v. DOJ",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "M",
+   "date": "2026-11-09",
+   "time": "2:00P.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1484",
+     "origin": "PTO",
+     "name": "In Re Blaze Mobile, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1485",
+     "origin": "PTO",
+     "name": "In Re Blaze Mobile, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1509",
+     "origin": "DCT",
+     "name": "Guntert & Zimmerman Const. Div., Inc. v. GOMACO Corporation",
+     "argued": true
+    },
+    {
+     "appeal": "25-1585",
+     "origin": "DCT",
+     "name": "Never-Search, Inc. v. Google LLC",
+     "argued": true
+    },
+    {
+     "appeal": "26-1233",
+     "origin": "CFC",
+     "name": "Rouzard v. US",
+     "argued": false
+    },
+    {
+     "appeal": "26-1767",
+     "origin": "MSPB",
+     "name": "Ciers v. MSPB",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "B",
+   "date": "2026-12-07",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "24-1817",
+     "origin": "MSPB",
+     "name": "Messal v. MSPB",
+     "argued": true
+    },
+    {
+     "appeal": "25-1435",
+     "origin": "PTO",
+     "name": "Sony Interactive Entertainment LLC v. Quantum Imaging LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1740",
+     "origin": "DCT",
+     "name": "Broadcom Corporation v. Netflix, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1761",
+     "origin": "CFC",
+     "name": "Price v. US",
+     "argued": true
+    },
+    {
+     "appeal": "24-1850",
+     "origin": "MSPB",
+     "name": "Messal v. Department of Agriculture",
+     "argued": false
+    },
+    {
+     "appeal": "26-2067",
+     "origin": "CAVC",
+     "name": "Wright v. Collins",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "C",
+   "date": "2026-12-07",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1576",
+     "origin": "ITC",
+     "name": "Nice North America LLC v. ITC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1848",
+     "origin": "CAVC",
+     "name": "Mazur v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1903",
+     "origin": "PTO",
+     "name": "DBR Finance, Inc. v. Rugged Cross Hunting Blinds, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "26-1828",
+     "origin": "DCT",
+     "name": "9878866 Canada Inc. v. Intake Breathing Technology, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "26-1757",
+     "origin": "CFC",
+     "name": "Dhital v. HHS",
+     "argued": false
+    },
+    {
+     "appeal": "26-1826",
+     "origin": "MSPB",
+     "name": "Steward v. DHS",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "D",
+   "date": "2026-12-07",
+   "time": "10:00A.M.",
+   "courtroom": "203",
+   "cases": [
+    {
+     "appeal": "25-1434",
+     "origin": "CFC",
+     "name": "Vanda Pharmaceuticals Inc. v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-1646",
+     "origin": "PTO",
+     "name": "Omni MedSci, Inc. v. Apple Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2070",
+     "origin": "DCT",
+     "name": "Palmetto State Armory, LLC v. Shield Arms, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-2123",
+     "origin": "DCT",
+     "name": "SilcoTek Corp. v. Waters Corporation",
+     "argued": true
+    },
+    {
+     "appeal": "26-1388",
+     "origin": "CAVC",
+     "name": "Bynum v. Collins",
+     "argued": false
+    },
+    {
+     "appeal": "26-1587",
+     "origin": "MSPB",
+     "name": "Koroma v. DVA",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "E",
+   "date": "2026-12-08",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1405",
+     "origin": "CIT",
+     "name": "Shanghai Tainai Bearing Co., Ltd. v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-1737",
+     "origin": "DCT",
+     "name": "Dynamics Inc. v. Samsung Electronics Co., Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1795",
+     "origin": "ITC",
+     "name": "NJOY, LLC v. ITC",
+     "argued": true
+    },
+    {
+     "appeal": "25-2018",
+     "origin": "PTO",
+     "name": "NJOY, LLC v. JUUL Labs, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1137",
+     "origin": "MSPB",
+     "name": "Strong v. SBA",
+     "argued": false
+    },
+    {
+     "appeal": "26-1324",
+     "origin": "PTO",
+     "name": "In Re Joseph",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "F",
+   "date": "2026-12-08",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "24-2377",
+     "origin": "MSPB",
+     "name": "Baptiste v. DHS",
+     "argued": true
+    },
+    {
+     "appeal": "25-1667",
+     "origin": "CAVC",
+     "name": "Valencia v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1790",
+     "origin": "PTO",
+     "name": "Ouster, Inc. v. Hesai Technology Co., Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2000",
+     "origin": "DCT",
+     "name": "Cellulose Material Solutions, LLC v. SC Marketing Group, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1721",
+     "origin": "DCT",
+     "name": "Solos Technology Ltd. v. Meta Platforms, Inc.",
+     "argued": false
+    },
+    {
+     "appeal": "26-1940",
+     "origin": "CFC",
+     "name": "Riepe v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "G",
+   "date": "2026-12-08",
+   "time": "2:00P.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "24-2194",
+     "origin": "DCT",
+     "name": "Novartis Pharmaceuticals Corporation v. Accord Healthcare, Inc.",
+     "argued": true
+    }
+   ]
+  },
+  {
+   "panel": "H",
+   "date": "2026-12-09",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1245",
+     "origin": "MSPB",
+     "name": "Litton v. DOJ",
+     "argued": true
+    },
+    {
+     "appeal": "25-1756",
+     "origin": "PTO",
+     "name": "ModernaTX, Inc. v. BioNTech SE",
+     "argued": true
+    },
+    {
+     "appeal": "25-1816",
+     "origin": "DCT",
+     "name": "Globalprivatequity.com, Inc. v. The Debt Exchange, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2085",
+     "origin": "CFC",
+     "name": "Dotson v. HHS",
+     "argued": true
+    },
+    {
+     "appeal": "26-1445",
+     "origin": "DCT",
+     "name": "Millennium Outdoors, LLC v. Leader Accessories LLC",
+     "argued": false
+    },
+    {
+     "appeal": "26-1938",
+     "origin": "CAVC",
+     "name": "Stinson v. Collins",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "I",
+   "date": "2026-12-09",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1689",
+     "origin": "CIT",
+     "name": "Asia Wheel Co., Ltd. v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-1694",
+     "origin": "CIT",
+     "name": "Asia Wheel Co., Ltd. v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-1743",
+     "origin": "DCT",
+     "name": "LaVoult.com, LLC v. Meta Platforms, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2052",
+     "origin": "PTO",
+     "name": "Sutter Home Winery, Inc. v. Roar Spirits, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "26-1065",
+     "origin": "CFC",
+     "name": "Monbo v. US",
+     "argued": false
+    },
+    {
+     "appeal": "26-1664",
+     "origin": "MSPB",
+     "name": "Green v. MSPB",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "A",
+   "date": "2026-12-10",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "26-1575",
+     "origin": "MSPB",
+     "name": "Jackler v. MSPB",
+     "argued": true
+    }
+   ]
+  },
+  {
+   "panel": "J",
+   "date": "2026-12-11",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1754",
+     "origin": "PTO",
+     "name": "In Re Ice Castles, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1862",
+     "origin": "CAVC",
+     "name": "Bray v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1155",
+     "origin": "MSPB",
+     "name": "Jones v. Government Publishing Office",
+     "argued": false
+    },
+    {
+     "appeal": "26-1369",
+     "origin": "CFC",
+     "name": "Cai v. HHS",
+     "argued": false
+    },
+    {
+     "appeal": "26-1729",
+     "origin": "MSPB",
+     "name": "Pyrdeck v. MSPB",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "K",
+   "date": "2026-12-11",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1889",
+     "origin": "CIT",
+     "name": "Cozy Comfort Company LLC v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-2064",
+     "origin": "DCT",
+     "name": "Flexiworld Technologies, Inc. v. Indeed, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1311",
+     "origin": "MSPB",
+     "name": "Green v. MSPB",
+     "argued": false
+    },
+    {
+     "appeal": "26-1858",
+     "origin": "CFC",
+     "name": "Toney v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "L",
+   "date": "2026-12-14",
+   "time": "2:00P.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "26-1960",
+     "origin": "DCT",
+     "name": "Advanced Accelerator Applications USA, Inc. v. Lantheus Medical Imaging, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-2028",
+     "origin": "DCT",
+     "name": "Advanced Accelerator Applications USA, Inc. v. Curium US LLC",
+     "argued": true
+    }
+   ]
+  },
+  {
+   "panel": "M",
+   "date": "2026-12-15",
+   "time": "2:00P.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1570",
+     "origin": "DCT",
+     "name": "Ravgen, Inc. v. Laboratory Corporation of America Holdings",
+     "argued": true
+    }
+   ]
+  }
+ ]
+}
