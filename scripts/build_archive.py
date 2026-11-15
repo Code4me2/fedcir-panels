@@ -99,7 +99,7 @@ def parse_date(s):
 def save(records, push, n_done):
     """Write decisions.csv and packed text files into the repository, then commit and push."""
     data_dir = os.path.join(REPO, "data"); os.makedirs(os.path.join(data_dir, "text"), exist_ok=True)
-    cols = ["key", "decided", "decided_iso", "doc_type", "appeal_numbers", "case_name", "origin", "precedential", "panel", "author",
+    cols = ["key", "decided", "decided_iso", "doc_type", "appeal_numbers", "case_name", "origin", "pro_se", "precedential", "panel", "author",
             "separate_opinions", "argued", "days_to_decision", "flag", "panel_line", "pdf_url", "posted", "posting_url"]
     rows = sorted(records.values(), key=lambda r: (r.get("decided_iso") or "", r["key"]))
     with open(os.path.join(data_dir, "decisions.csv"), "w", newline="") as f:
@@ -168,7 +168,7 @@ def main():
             text, r["pdf_url"] = open(txt_path).read(), open(meta_path).read()
             e, x = extract(text), extract_more(text)
             r.update(decided=x["decided"], precedential="Nonprecedential" if p["kind"] == "rule36" else x["precedential"],
-                     origin=x["origin_from_text"], panel="; ".join(e["panel"] or []), author=e["author"] or "",
+                     origin=x["origin_from_text"], pro_se=x["pro_se"], panel="; ".join(e["panel"] or []), author=e["author"] or "",
                      separate_opinions="; ".join(e["separate_opinions"]), panel_line=e["panel_raw"] or "")
             name = re.sub(r"^(\d{2,4}-[\dm]{4}-)", "", p["rest"])
             r["case_name"] = re.split(r"-(?:opinion|rule-36-judgment|rule_36_judgment)", name)[0].replace("-", " ").strip()

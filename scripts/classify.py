@@ -9,7 +9,7 @@ re-reads panel and author only so the two can be cross-checked.
   python3 scripts/classify.py submit   --sample samples/classification_test_50.csv --model claude-haiku-5-5
   python3 scripts/classify.py collect  --model claude-haiku-5-5      (waits, then saves results)
 
-The API key is read from the ANTHROPIC_API_KEY environment variable. Requests always go to
+The API key is read from FEDCIR_API_KEY (or ANTHROPIC_API_KEY). Requests always go to
 https://api.anthropic.com, the owner's own account, whatever ANTHROPIC_BASE_URL says.
 """
 import argparse, csv, glob, gzip, json, sys, time
@@ -150,9 +150,19 @@ def build_requests(rows, text, model, issues, sides):
     return reqs
 
 
+KEY_VARS = ("FEDCIR_API_KEY", "ANTHROPIC_API_KEY")
+
+
 def client():
-    import anthropic
-    return anthropic.Anthropic(base_url=API_URL)  # key from ANTHROPIC_API_KEY
+    """Owner's key only. A variable named ANTHROPIC_API_KEY on the cloud environment did not reach
+    the session's tools (2026-11-15), probably because Claude Code reserves that name for its own
+    login, so the key is stored as FEDCIR_API_KEY instead."""
+    import os, anthropic
+    key = next((os.environ[v] for v in KEY_VARS if os.environ.get(v)), None)
+    if not key:
+        sys.exit("No API key: set FEDCIR_API_KEY on the cloud environment 'fedcir-panels' "
+                 "and start a new session.")
+    return anthropic.Anthropic(api_key=key, base_url=API_URL)
 
 
 def cmd_dry_run(a):

@@ -92,8 +92,24 @@ ORIGINS = [
     ("ARB", r"[Aa]rbitrat"),
 ]
 
+def parse_pro_se(text):
+    """'yes' if a party appears pro se in the counsel listing ("JOHN DOE, City, ST, pro se.").
+
+    Only the header before the panel line is read, so the opinion's own mentions ("proceeding
+    pro se before the Board") don't count: those are usually about an earlier stage, when the
+    party may have had a lawyer on appeal. An amicus curiae appearing pro se is not a party.
+    """
+    m = re.search(r"\bBefore[,:]?\s+[A-Z]|PER\s?C\s?URIAM\s*\(", text)
+    head = re.sub(r"\s+", " ", text[:m.start()] if m and m.start() < 12000 else text[:5000])
+    for m in re.finditer(r"\bpro se\b", head, re.I):
+        entry = re.split(r"\.\s(?=[A-Z][A-Z])", head[max(0, m.start() - 250):m.start()])[-1]  # this counsel entry only
+        if not re.search(r"\bamic(?:us|i)\b", entry, re.I):
+            return "yes"
+    return ""
+
 def extract_more(text):
     text = norm(text)
+    pro_se = parse_pro_se(text)
     head = re.sub(r"\s+", " ", text[:6000])
     d = (re.search(r"Decided:?\s*([A-Z][a-z]+\.? \d{1,2},? \d{4})", head)
          or re.search(r"OPINION ISSUED:\s*([A-Z][a-z]+\.? \d{1,2},? \d{4})", head)
@@ -129,4 +145,5 @@ def extract_more(text):
         "decided": d.group(1) if d else "",
         "precedential": "Nonprecedential" if re.search(r"This disposition is nonprecedential", head, re.I) else "Precedential",
         "origin_from_text": origin,
+        "pro_se": pro_se,
     }
