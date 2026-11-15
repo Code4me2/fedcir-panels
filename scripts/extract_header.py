@@ -57,9 +57,9 @@ def parse_author(text, panel_end):
 def parse_separate(text):
     flat = re.sub(r"\s+", " ", text[:8000])
     out = []
-    for m in re.finditer(rf"((?:Opinion )?(?:[Cc]oncurring|[Dd]issenting|[Cc]oncurring in part and dissenting in part|[Dd]issenting in part)[a-z ]*?) (?:opinion )?filed by (?:{TITLE} )*Judges? ([A-Z][A-Z'\-]+)", flat):
+    for m in re.finditer(rf"((?:Opinion )?(?:[Cc]oncurring|[Dd]issenting|[Cc]oncurring in part and dissenting in part|[Dd]issenting in part)[a-z, ]*?) (?:[Oo]pinion )?filed by (?:{TITLE} )*Judges? ([A-Z][A-Z'\-]+)", flat):
         kind = "dissent" if "issent" in m.group(1) else "concurrence"
-        if "oncurring in part and dissenting" in m.group(1): kind = "partial dissent"
+        if "issenting in part" in m.group(1) or "oncurring in part and dissenting" in m.group(1): kind = "partial dissent"
         out.append(f"{kind}: {m.group(2)}")
     return sorted(set(out))
 

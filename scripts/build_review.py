@@ -31,7 +31,7 @@ OWNER = PatternFill("solid", fgColor="E2EFDA")  # green: columns for the owner t
 
 
 def norm(name):
-    return name.upper().replace("CHIEF JUDGE", "").replace("(VISITING)", "").strip()
+    return name.upper().replace("\u2019", "'").replace("CHIEF JUDGE", "").replace("(VISITING)", "").strip()
 
 
 def request_cost(model, u):
@@ -99,6 +99,10 @@ def main():
     a = p.parse_args()
     stem = Path(a.sample).stem
     cases = list(csv.DictReader(open(ROOT / a.sample)))
+    # separate opinions from the current archive table (the rule was corrected after the sample was drawn)
+    sep = {r["key"]: r["separate_opinions"] for r in csv.DictReader(open(ROOT / "data/decisions.csv"))}
+    for c in cases:
+        c["separate_opinions"] = sep.get(c["key"], c["separate_opinions"])
     labels = {i["code"]: {"issue": i["issue"], "a": i["side_a_label"], "b": i["side_b_label"], "group": i["group"]}
               for i in csv.DictReader(open(ROOT / "data/issue_list.csv"))}
     res = {}
