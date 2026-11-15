@@ -25,7 +25,9 @@ Why build it: per-judge outcome data exists in commercial tools, but this combin
 - **Argument dates:** recordings posted on bulk-upload days (more than 100 in a day: 2013-07-30, 2014-11-12, 2015-07-20, 2015-08-06, 2015-10-30) count as argued but have no date. They are excluded from time-to-decision.
 - **Revised/corrected opinions replace the original** when an earlier opinion has the same appeal number(s) and panel; the original is flagged "superseded by revised opinion" and left out of stats.
 - **Visiting judges are one "visiting judges" group, not rated individually** (too little data). Stark's pre-2022 panels as a Delaware district judge stay separate from his Federal Circuit record. **En banc decisions are a separate group too.** Both are still classified; the grouping is applied only in the stats/dashboard step. A later version could list a judge's en banc votes as notes.
-- **Superseded decisions are excluded from stats.** *Proposed, not yet confirmed by the owner:* decisions with no panel in the PDF are left out of judge statistics, and 2-judge panels are left out of sit-together counts.
+- **Superseded decisions are excluded from stats.**
+- **Decisions with no panel in the PDF (65) are left out of judge statistics** (confirmed by the owner 2026-11-15). Known gap: a January 2019 batch of Rule 36 judgments is missing from sit-together counts for that month.
+- **2-judge panels (6) count toward pair counts but not trio counts** in sit-together statistics (confirmed by the owner 2026-11-15; the two judges did sit together, but there was no trio).
 
 ## Data sources (www.cafc.uscourts.gov, allowed in the cloud environment)
 - **Do not bypass the court's bot-check.** The Opinions & Orders and recordings tables load from a wpDataTables admin-ajax feed behind an Azure WAF JavaScript challenge. Reading it with a headless browser was blocked as circumventing access protection. Don't do it. (The table's Excel/CSV export only covers the visible page and has no PDF links.)
