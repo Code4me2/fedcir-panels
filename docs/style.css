@@ -144,4 +144,14 @@ footer { color: var(--muted); font-size: 12px; padding: 24px 16px 40px; }
 .doc table { font-size: 13px; }
 .doc td.code { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--text-2); }
 .doc .toc { font-size: 14px; columns: 2 220px; padding-left: 18px; }
-.back { font-size: 14px; }
+
+/* top navigation, same on every page */
+.topnav { position: sticky; top: 0; z-index: 10; background: var(--panel); border-bottom: 1px solid var(--line); }
+.topnav-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; }
+.topnav .brand { font-weight: 650; color: var(--text); text-decoration: none; font-size: 15px; white-space: nowrap; }
+.topnav .tabs { display: flex; gap: 4px; }
+.topnav .tabs a { padding: 6px 12px; border-radius: 6px; color: var(--text-2); text-decoration: none; font-size: 14px; font-weight: 500; }
+.topnav .tabs a:hover { background: var(--row-hi); color: var(--text); }
+.topnav .tabs a[aria-current="page"] { background: var(--bg); color: var(--text); font-weight: 650; box-shadow: inset 0 0 0 1px var(--line); }
+@media (max-width: 480px) { .topnav .brand { display: none; } .topnav-inner { justify-content: center; } }
+[id] { scroll-margin-top: 60px; }  /* anchor links land below the sticky menu */
