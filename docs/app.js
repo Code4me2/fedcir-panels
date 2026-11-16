@@ -86,6 +86,9 @@ function writeHash() {
   const p = new URLSearchParams(free ? { m: "free", j: S.j.join(","), ct: S.ct, i: S.i, y: S.y, ps: S.ps, st: S.st }
     : { date: S.date, s: S.s, j: S.j.join(","), a: S.a, ct: S.ct, i: S.i, y: S.y, ps: S.ps, st: S.st });
   history.replaceState(null, "", "#" + p.toString());
+  // "Report a problem" carries the current view, so a report can say exactly what the person was looking at
+  const rep = document.getElementById("nav-report");
+  if (rep) rep.href = "contact.html#from=" + encodeURIComponent(location.href);
 }
 
 /* ---------- filters ---------- */

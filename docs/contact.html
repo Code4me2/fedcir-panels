@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Report a Problem · Federal Circuit Panels</title>
+<meta name="description" content="How to report a problem with the Federal Circuit Panels dashboard: something broken, a wrong number, or a decision coded incorrectly.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="topnav" aria-label="Site">
+  <div class="wrap topnav-inner">
+    <a class="brand" href="index.html">Federal Circuit Panels</a>
+    <div class="tabs">
+      <a href="index.html">Dashboard</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="contact.html" aria-current="page">Report a problem</a>
+    </div>
+  </div>
+</nav>
+<header class="wrap doc">
+  <h1>Report a problem</h1>
+  <p class="lede">Something not loading, a number that looks wrong, or a decision the AI coded incorrectly? Please let us know
+    by email.</p>
+</header>
+
+<main class="wrap doc">
+  <div class="contact-box" id="contact-box"></div>
+
+  <h2>What to include</h2>
+  <ul>
+    <li><strong>The link to the page you were looking at.</strong> The dashboard's address records the session, judges, case type,
+      and issue you chose, so the link shows exactly what you saw. If you came here from the dashboard's menu, the email
+      button above adds it for you.</li>
+    <li><strong>What looks wrong</strong>, and what you expected instead.</li>
+    <li><strong>For a decision coded incorrectly:</strong> the case name or appeal number, the issue, and what the opinion
+      actually held. A pin cite helps.</li>
+    <li><strong>For something broken:</strong> your browser and device (for example, Safari on an iPhone), and a screenshot if
+      you can.</li>
+  </ul>
+
+  <h2>Before you write</h2>
+  <ul>
+    <li>Issues and outcomes are coded by AI from the court's opinions, and some errors are expected. The
+      <a href="methodology.html">methodology</a> explains the rules and known limits, which may explain a number that looks
+      surprising.</li>
+    <li>For an upcoming session, the judges are entered by you; the court posts the actual panel about one hour before argument.</li>
+    <li>New decisions are added every week, so a decision from the last few days may not be included yet.</li>
+  </ul>
+  <p class="small muted">This site is not affiliated with the court. Please don't send confidential client information.</p>
+</main>
+
+<footer class="wrap doc">
+  <p>Source: opinions, Rule 36 judgments, argument recordings, and calendars posted by the U.S. Court of Appeals for the
+    Federal Circuit on its website. Not affiliated with the court. Not legal advice.</p>
+</footer>
+<script>
+"use strict";
+/* The address reports go to. Put it between the quotes, e.g. "reports@example.com"; empty = not set up yet. */
+const CONTACT_EMAIL = "";
+
+(() => {
+  const box = document.getElementById("contact-box");
+  const from = new URLSearchParams(location.hash.slice(1)).get("from") || "";
+  if (!CONTACT_EMAIL) {
+    box.innerHTML = "<strong>The contact address is not set up yet.</strong> Please check back soon.";
+    return;
+  }
+  const body = "What looks wrong:\n\n\nWhat I expected:\n\n\n" +
+    (from ? "Page I was looking at: " + from + "\n" : "Link to the page (copy it from the address bar):\n") +
+    "Browser and device:\n";
+  const href = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent("Federal Circuit Panels: problem report") +
+    "&body=" + encodeURIComponent(body);
+  const a = document.createElement("a");
+  a.className = "button"; a.href = href; a.textContent = "Email a report";
+  const p = document.createElement("p");
+  p.append("Or write to ");
+  const plain = document.createElement("a"); plain.href = "mailto:" + CONTACT_EMAIL; plain.textContent = CONTACT_EMAIL;
+  p.append(plain, ".");
+  box.replaceChildren(a, p);
+})();
+</script>
+</body>
+</html>
