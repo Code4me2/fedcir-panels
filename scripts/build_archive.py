@@ -109,8 +109,9 @@ def save(records, push, n_done):
         p = os.path.join(TXT_DIR, r["key"] + ".txt")
         if os.path.exists(p): by_year[(r.get("decided_iso") or "unknown")[:4]].append({"key": r["key"], "text": open(p).read()})
     for y, docs in by_year.items():
-        with gzip.open(os.path.join(data_dir, "text", f"text_{y}.jsonl.gz"), "wt") as f:
-            for d in docs: f.write(json.dumps(d) + "\n")
+        # mtime=0: an unchanged year gives byte-identical files, so weekly updates don't re-commit the whole text archive
+        with gzip.GzipFile(os.path.join(data_dir, "text", f"text_{y}.jsonl.gz"), "wb", mtime=0) as gz:
+            gz.write("".join(json.dumps(d) + "\n" for d in docs).encode("utf-8"))
     if push:
         msg = f"Archive progress: {n_done} decisions processed\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01B3QP8fPLAjgJii7MVSoNS4"
         g = ["git", "-C", REPO, "-c", "user.name=zljacobs24", "-c", "user.email=zljacobs24@users.noreply.github.com"]
@@ -144,7 +145,7 @@ def main():
     if a.limit: decisions = decisions[:: max(1, len(decisions) // a.limit)][: a.limit]
     log(f"{len(decisions)} decision postings to process")
 
-    if a.extract_only and not os.listdir(TXT_DIR):  # fresh session: rebuild the text cache from the copy saved in data/
+    if not os.listdir(TXT_DIR):  # fresh session or GitHub Actions: rebuild the text cache from the copy saved in data/ (avoids re-downloading)
         urls = {r["key"]: r.get("pdf_url", "") for r in csv.DictReader(open(os.path.join(REPO, "data/decisions.csv")))}
         for f in sorted(os.listdir(os.path.join(REPO, "data/text"))):
             for line in gzip.open(os.path.join(REPO, "data/text", f), "rt"):

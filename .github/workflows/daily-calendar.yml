@@ -1,0 +1,30 @@
+# Daily: re-read the court's monthly argument calendars (the court revises them). See scripts/fetch_calendar.py.
+name: Daily calendar
+on:
+  schedule:
+    - cron: "41 10 * * *"  # 10:41 UTC (5:41 a.m. Eastern in winter), before the court's 10 a.m. sessions
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: data-update
+  cancel-in-progress: false
+jobs:
+  calendar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+      - name: Read calendars
+        run: python3 scripts/fetch_calendar.py
+      - name: Save to GitHub
+        run: |
+          git config user.name zljacobs24
+          git config user.email zljacobs24@users.noreply.github.com
+          git add docs/data/calendar.json
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git commit -q -m "Calendar $(date -u +%Y-%m-%d)"
+          for i in 1 2 3 4; do git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0; sleep $((i*15)); done
+          exit 1

@@ -1,6 +1,6 @@
 """Build the dashboard's data files (docs/data/) from the archive and the AI classification.
 
-  python3 scripts/build_site_data.py            (full run: results/full_v1_part*_claude-haiku-5-5.jsonl)
+  python3 scripts/build_site_data.py            (full run plus weekly updates: results/full_v1_part*, results/update_*)
   python3 scripts/build_site_data.py --test     (development only: the 50-case test results, v2)
 
 The files are reshaped, not summarized: every statistic on the dashboard is counted in the browser
@@ -23,7 +23,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs/data"
 CLASSIFICATION = "Classification v1: Claude Haiku 5.5, November 2026"
-FULL = "results/full_v1_part*_claude-haiku-5-5.jsonl"
+# The full run, then the weekly updates (scripts/update.py), oldest first. If a decision appears in more
+# than one file (a failed request retried later), the last successful record is used.
+FULL = ("results/full_v1_part*_claude-haiku-5-5.jsonl", "results/update_*_claude-haiku-5-5.jsonl")
 TEST = ("results/classification_test_50_claude-haiku-5-5_v2.jsonl", "samples/classification_test_50.csv")
 
 FAVORED = ["side_a", "side_b", "mixed", "other_unclear"]
@@ -45,8 +47,14 @@ def load_results(test):
         for r in recs:
             r["key"] = ids[r["id"]]
         return recs, [TEST[0]]
-    files = sorted(glob.glob(str(ROOT / FULL)))
-    return [json.loads(l) for f in files for l in open(f)], [str(Path(f).relative_to(ROOT)) for f in files]
+    files = [f for pattern in FULL for f in sorted(glob.glob(str(ROOT / pattern)))]
+    latest = {}
+    for f in files:
+        for line in open(f):
+            r = json.loads(line)
+            if r.get("coding") or r["key"] not in latest:
+                latest[r["key"]] = r
+    return list(latest.values()), [str(Path(f).relative_to(ROOT)) for f in files]
 
 
 def main():

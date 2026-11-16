@@ -210,16 +210,21 @@ def cmd_submit(a):
     bf.write_text(json.dumps({"batch_id": b.id, "model": a.model, "sample": a.sample, "tag": a.tag, "n": len(reqs),
                               "submitted": time.strftime("%Y-%m-%d %H:%M:%S")}))
     print(f"submitted batch {b.id} ({len(reqs)} requests, {a.model})")
+    return b.id
 
 
 def cmd_collect(a):
     bf = batch_file(a.model, a.sample, a.tag)
     info = json.loads(bf.read_text())
     c = client()
+    deadline = time.time() + 60 * a.wait if getattr(a, "wait", None) is not None else None
     while True:
         b = c.messages.batches.retrieve(info["batch_id"])
         if b.processing_status == "ended":
             break
+        if deadline is not None and time.time() > deadline:
+            print(f"batch {info['batch_id']} not finished yet; collect it later", flush=True)
+            return None
         print(f"{time.strftime('%H:%M:%S')} {b.processing_status}: {b.request_counts.processing} still processing",
               flush=True)
         time.sleep(60)
@@ -256,6 +261,7 @@ def cmd_collect(a):
     print(f"saved {out.relative_to(ROOT)}; tokens {tok}; estimated cost ${cost:.2f} (batch rate)")
     for p in problems:
         print("PROBLEM", p)
+    return {"file": out, "cost": cost, "problems": problems}
 
 
 def main():
