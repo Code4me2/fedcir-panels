@@ -440,7 +440,7 @@ function renderMethod() {
   const m = A.meta;
   const li = (t) => h("li", {}, t);
   $("method").replaceChildren(
-    h("p", {}, `${m.decisions.toLocaleString()} decisions from ${m.first_decision.slice(0, 4)} to ${m.latest_decision} ` +
+    h("p", {}, `${m.decisions.toLocaleString()} decisions posted from 2015 to ${m.latest_decision} ` +
       `(${m.opinions.toLocaleString()} written opinions, ${m.rule36.toLocaleString()} Rule 36 judgments), taken from the court's website. ` +
       `Issues and outcomes in ${m.classified.toLocaleString()} written opinions were coded by AI (${m.classification}); everything else is read from the opinions by fixed text rules.`),
     h("ul", {},
