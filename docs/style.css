@@ -129,3 +129,19 @@ footer { color: var(--muted); font-size: 12px; padding: 24px 16px 40px; }
   .bar { width: 110px; }
   h1 { font-size: 22px; }
 }
+
+.mode { border: 0; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.mode label { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line);
+  border-radius: 999px; font-size: 14px; cursor: pointer; background: var(--bg); }
+.mode label:has(input:checked) { background: var(--row-hi); border-color: var(--link); font-weight: 600; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* methodology page */
+.doc { max-width: 760px; }
+.doc h2 { font-size: 19px; }
+.doc p, .doc li { color: var(--text); }
+.doc li { margin: 4px 0; }
+.doc table { font-size: 13px; }
+.doc td.code { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--text-2); }
+.doc .toc { font-size: 14px; columns: 2 220px; padding-left: 18px; }
+.back { font-size: 14px; }

@@ -1,6 +1,7 @@
 /* Federal Circuit Panels dashboard. Every number is counted here, in the browser, from
    data/archive.json (one row per decision and one per AI-coded issue) and data/calendar.json.
-   The counting rules are written out in CLAUDE.md ("Methodology: dashboard statistics"). */
+   The counting rules are written out in CLAUDE.md ("Methodology: dashboard statistics") and, for readers,
+   in methodology.html. Two modes: "session" (a case on the court's calendar) and "free" (any panel, no case). */
 "use strict";
 
 const MIN_N = 10;          // fewer decided votes than this: shown grey, never compared with the court
@@ -17,7 +18,7 @@ let A, CAL;                 // archive, calendar
 let jkey = [];              // judge index -> grouping key (visiting judges share one key)
 let issueByCode = {};
 const quoteCache = {};
-const S = { date: "", s: "", j: ["", "", ""], a: "", ct: -1, i: "", y: 2015, ps: 1, st: 1 };
+const S = { m: "session", date: "", s: "", j: ["", "", ""], a: "", ct: -1, i: "", y: 2015, ps: 1, st: 1 };
 let drillState = null;
 
 /* ---------- small helpers ---------- */
@@ -69,6 +70,7 @@ function todayET() {
 /* ---------- state in the URL, so a view can be shared ---------- */
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
+  if (p.get("m") === "free") S.m = "free";
   if (p.get("date")) S.date = p.get("date");
   if (p.get("s")) S.s = p.get("s");
   if (p.get("j")) S.j = (p.get("j").split(",").concat(["", "", ""])).slice(0, 3);
@@ -80,7 +82,9 @@ function readHash() {
   if (p.get("st")) S.st = +p.get("st");
 }
 function writeHash() {
-  const p = new URLSearchParams({ date: S.date, s: S.s, j: S.j.join(","), a: S.a, ct: S.ct, i: S.i, y: S.y, ps: S.ps, st: S.st });
+  const free = S.m === "free";   // "any panel" links carry no session or case
+  const p = new URLSearchParams(free ? { m: "free", j: S.j.join(","), ct: S.ct, i: S.i, y: S.y, ps: S.ps, st: S.st }
+    : { date: S.date, s: S.s, j: S.j.join(","), a: S.a, ct: S.ct, i: S.i, y: S.y, ps: S.ps, st: S.st });
   history.replaceState(null, "", "#" + p.toString());
 }
 
@@ -102,10 +106,17 @@ function containsAll(keys, want) {
 
 /* ---------- section 1: calendar ---------- */
 function sessionsOn(date) { return CAL.sessions.filter((s) => s.date === date); }
-function currentSession() { return sessionsOn(S.date).find((s) => s.panel === S.s) || null; }
+function currentSession() { return S.m === "free" ? null : sessionsOn(S.date).find((s) => s.panel === S.s) || null; }
 function currentCase() { const s = currentSession(); return s ? s.cases.find((c) => c.appeal === S.a) || null : null; }
 
+function renderMode() {
+  const free = S.m === "free";
+  $("mode-session").checked = !free; $("mode-free").checked = free;
+  $("session-section").hidden = free;
+  $("free-note").hidden = !free;
+}
 function renderCalendar() {
+  if (S.m === "free") return;
   const dates = [...new Set(CAL.sessions.map((s) => s.date))];
   if (!dates.includes(S.date)) {
     const t = todayET();
@@ -187,6 +198,11 @@ function panelTiming() {
 }
 function renderPanelSource() {
   const el = $("panel-source");
+  if (S.m === "free") {
+    el.replaceChildren(h("strong", {}, "Any panel – judges chosen by you. "),
+      "Not tied to an argument session or case: try any combination of judges, case type and issue.");
+    return;
+  }
   if (PANEL_FROM_COURT) { el.replaceChildren(`Judges read from the court's daily schedule at ${PANEL_FROM_COURT.read}.`); return; }
   el.replaceChildren(h("strong", {}, "Judges entered by you – not from the court. "), panelTiming());
 }
@@ -319,7 +335,8 @@ function renderIssuePickers() {
   $("case-line").textContent = c ? `Case: ${c.appeal} ${c.name} (${c.origin}, ${c.argued ? "argued" : "on the briefs"}), Panel ${sess.panel}. ` +
     "The case type is a guess from the origin and case name; change it if it is wrong." +
     (S.j.some(Boolean) && !PANEL_FROM_COURT ? " Judges: entered by you, not from the court." : "") :
-    "No case selected: choose the case type yourself, or click a case above.";
+    (S.m === "free" ? "Any panel, no case: choose the case type and the issue." :
+     "No case selected: choose the case type yourself, or click a case above.");
 }
 
 function tally(rulings, key) {
@@ -435,32 +452,9 @@ async function renderDrill() {
     h("p", {}, h("button", { class: "link", onclick: () => { drillState = null; renderDrill(); } }, "Close")));
 }
 
-/* ---------- methodology text ---------- */
-function renderMethod() {
-  const m = A.meta;
-  const li = (t) => h("li", {}, t);
-  $("method").replaceChildren(
-    h("p", {}, `${m.decisions.toLocaleString()} decisions posted from 2015 to ${m.latest_decision} ` +
-      `(${m.opinions.toLocaleString()} written opinions, ${m.rule36.toLocaleString()} Rule 36 judgments), taken from the court's website. ` +
-      `Issues and outcomes in ${m.classified.toLocaleString()} written opinions were coded by AI (${m.classification}); everything else is read from the opinions by fixed text rules.`),
-    h("ul", {},
-      li("Panel, author, decision date, origin, precedential status and pro se parties are read from each PDF by text rules, not AI. The argument date is the date the court posted the recording."),
-      li("For each written opinion, the AI listed every issue the court decided, from a fixed list of 70 issue types, and which side the ruling favored. Issues the court did not reach are not coded."),
-      li("Every judge on the panel gets a vote on every issue, including judges who joined a unanimous opinion. A judge who dissented on an issue is counted for the other side; a dissent on a mixed or unclear ruling counts as unclear."),
-      li("Sides are fixed per case type (e.g. patent owner vs. accused infringer or petitioner; veteran vs. VA; lower vs. higher duties in trade cases), never by who appealed. A vacatur or remand favors the side that appealed on that issue. Claim construction is coded by its effect on the judgment."),
-      li("Percentages are shares of votes for one side, for the other, or mixed (some claims or counts each way). Votes the AI could not assign to a side (\"unclear\") are counted in brackets but left out of the percentages."),
-      li(`"Compared with the court" uses a 95% confidence interval around the judge's share; a judge with fewer than ${MIN_N} votes is shown in grey and not compared. With many judges and issues, some differences will appear by chance; read them with the case list (click any row).`),
-      li("Rule 36 judgments (affirmance without opinion) give no reasons, so they are left out of the issue statistics; outcome statistics describe cases with written decisions. They count for sitting together and the Rule 36 rate."),
-      li("Left out of judge statistics: en banc decisions, decisions replaced by a revised opinion, and decisions whose PDF names no panel. Visiting judges are grouped together. Judge Stark's earlier sittings as a visiting district judge are in the visiting group."),
-      li("Accuracy check: 25 issues drawn at random from patent cases were each checked against the opinion by a person; the AI had coded all 25 correctly. A check of this size cannot rule out occasional errors, and other case types were not checked."),
-      li("Known limits: AI coding has some errors; the pro se flag does not say which side was pro se; a January 2019 batch of Rule 36 judgments has no readable panel; recordings posted in bulk have no argument date."),
-    ),
-    h("p", { class: "small" }, `Data built ${m.built}. ${m.report["issues coded"] || 0} issues coded.`));
-}
-
 /* ---------- wiring ---------- */
 function renderAll() {
-  renderCalendar(); renderPickers(); renderTogether(); renderJudges(); renderIssuePickers(); renderVotes(); writeHash();
+  renderMode(); renderCalendar(); renderPickers(); renderTogether(); renderJudges(); renderIssuePickers(); renderVotes(); writeHash();
 }
 async function main() {
   readHash();
@@ -477,6 +471,9 @@ async function main() {
   const years = []; for (let y = +A.meta.latest_decision.slice(0, 4); y >= 2015; y--) years.push(y);
   $("since").replaceChildren(...years.map((y) => h("option", { value: y, selected: y === S.y }, y)));
   $("pro-se").checked = !!S.ps; $("same-type").checked = !!S.st;
+  const setMode = (m) => { S.m = m; drillState = null; renderAll(); window.scrollTo({ top: 0 }); };
+  $("mode-session").onchange = () => setMode("session");
+  $("mode-free").onchange = () => setMode("free");
   $("date").onchange = (e) => { S.date = e.target.value; S.s = ""; S.a = ""; renderAll(); };
   $("session").onchange = (e) => { S.s = e.target.value; S.a = ""; renderAll(); };
   $("since").onchange = (e) => { S.y = +e.target.value; renderAll(); };
@@ -485,7 +482,6 @@ async function main() {
   $("ctype").onchange = (e) => { S.ct = +e.target.value; S.i = ""; drillState = null; renderAll(); };
   $("issue").onchange = (e) => { S.i = e.target.value; drillState = null; renderAll(); };
   buildPickerOptions();
-  renderMethod();
   renderAll();
 }
 main();

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methodology · Federal Circuit Panels</title>
+<meta name="description" content="How the Federal Circuit Panels dashboard is built: data source, text rules, AI coding of issues, how votes and sides are counted, accuracy check and known limits.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="wrap doc">
+  <p class="back"><a href="index.html">← Back to the dashboard</a></p>
+  <h1>How the numbers are made</h1>
+  <p class="status" id="status">Data through <span data-m="latest_decision">…</span> · <span data-m="classification">…</span> · built <span data-m="built">…</span></p>
+</header>
+
+<main class="wrap doc">
+  <ul class="toc">
+    <li><a href="#source">Where the data comes from</a></li>
+    <li><a href="#rules">What is read by text rules</a></li>
+    <li><a href="#ai">What the AI codes</a></li>
+    <li><a href="#sides">Sides</a></li>
+    <li><a href="#votes">How votes are counted</a></li>
+    <li><a href="#compare">Comparing a judge with the court</a></li>
+    <li><a href="#other">Sitting together, authorship, timing, Rule 36</a></li>
+    <li><a href="#excluded">What is left out</a></li>
+    <li><a href="#accuracy">Accuracy check</a></li>
+    <li><a href="#limits">Known limits</a></li>
+    <li><a href="#updates">Updates</a></li>
+    <li><a href="#issues">The issue list</a></li>
+  </ul>
+
+  <h2 id="source">Where the data comes from</h2>
+  <p>Everything comes from the U.S. Court of Appeals for the Federal Circuit's own website: its opinions and Rule 36
+    judgments (as PDFs), its postings of oral-argument recordings, and its monthly argument calendars. The archive holds
+    <strong><span data-m="decisions">…</span> decisions</strong> posted from 2015 through <span data-m="latest_decision">…</span>:
+    <span data-m="opinions">…</span> written opinions and <span data-m="rule36">…</span> Rule 36 judgments (affirmances without
+    opinion). Coverage starts in 2015 because the court's online index is essentially complete from that year and
+    incomplete before it. All case types are included, not only patent cases.</p>
+
+  <h2 id="rules">What is read by text rules</h2>
+  <p>These facts are read from each PDF by fixed text rules, not by AI, so the same document always gives the same result:</p>
+  <ul>
+    <li><strong>Panel</strong> (the "Before …" line), <strong>author</strong> ("Opinion for the court filed by …", or per curiam),
+      and <strong>separate opinions</strong>.</li>
+    <li><strong>Decision date</strong>, <strong>precedential status</strong> and <strong>origin</strong> (district court, PTAB, ITC,
+      MSPB, Court of Federal Claims, Veterans Court, and so on).</li>
+    <li><strong>Pro se parties</strong>, from the list of counsel at the top of the opinion.</li>
+    <li><strong>Argument date</strong>: the date the court posted the argument recording, matched by appeal number. Recordings
+      are normally posted the same day. A few days in 2013–2015 when the court posted hundreds of old recordings at once give no
+      usable date; those cases count as argued but are left out of timing figures.</li>
+  </ul>
+  <p>Judges who are not members of the Federal Circuit (district judges and others sitting by designation) are grouped as
+    "visiting judges"; there is too little data to rate them one by one.</p>
+
+  <h2 id="ai">What the AI codes</h2>
+  <p>Each written opinion (<span data-m="classified">…</span> in all) was read in full by an AI model
+    (<span data-m="classification">…</span>). From a fixed list of 70 issue types (<a href="#issues">listed below</a>),
+    it recorded every issue the court actually decided and, for each one:</p>
+  <ul>
+    <li>which side the ruling favored, or "mixed" (some claims, patents or counts each way), or "unclear";</li>
+    <li>the court's disposition (affirmed, reversed, vacated, and so on);</li>
+    <li>which judges, if any, dissented on that issue;</li>
+    <li>a one-sentence description and a supporting quote from the opinion, shown when you click a row on the dashboard.</li>
+  </ul>
+  <p><span data-m="issues_coded">…</span> issues were coded. Rules the AI was given:</p>
+  <ul>
+    <li>Only issues the court decided are coded. Issues the court "need not reach" are not.</li>
+    <li>A vacatur or remand favors the side that appealed, on the issue actually decided. If the court sent a case back only
+      because the tribunal failed to explain itself, only that procedural issue is coded, not the merits.</li>
+    <li>Claim construction is coded by its effect on the judgment: a construction that leads the court to vacate a
+      noninfringement judgment favors the patent owner. When the effect is unclear, it is coded "unclear".</li>
+    <li>When the court refuses to consider an argument as forfeited, that is coded as a forfeiture ruling for the side that
+      benefits, not as a ruling on the underlying issue.</li>
+    <li>The court's routine statement of its own jurisdiction is not coded; jurisdiction is coded only when it was disputed.</li>
+  </ul>
+
+  <h2 id="sides">Sides</h2>
+  <p>Votes are shown by the side they favored, in the issue's own terms (for example "nonobvious (patent owner)"), never as
+    "appellant won", because either side can be the appellant. Sides are fixed for each case type:</p>
+  <div class="scroll"><table id="sides-table"></table></div>
+
+  <h2 id="votes">How votes are counted</h2>
+  <ul>
+    <li>Every judge on the panel gets one vote on every coded issue, including judges who joined a unanimous opinion.</li>
+    <li>A judge who dissented on an issue is counted for the other side on that issue only. A partial dissent counts only for
+      the issues it covers; a concurrence counts with the majority. A dissent on a mixed or unclear ruling counts as unclear.</li>
+    <li>Percentages are shares of votes for one side, mixed, and the other side. "Unclear" votes are shown in brackets, e.g.
+      "(+3)", and left out of the percentages.</li>
+    <li>By default a judge's record is shown only in the same case type as the case (for example, obviousness in PTAB appeals
+      separately from obviousness in district-court appeals). Untick "Only this case type" to combine them.</li>
+    <li>Below each issue, the same count is shown for the issue's whole group (for example all "Patent validity" issues), as a
+      fallback when the issue alone has few votes.</li>
+    <li>Rule 36 judgments give no reasons, so they are left out of issue votes. Vote figures describe cases with written
+      opinions.</li>
+  </ul>
+
+  <h2 id="compare">Comparing a judge with the court</h2>
+  <p>Next to each judge, the dashboard shows the whole court's rulings on the same issue under the same filters (one count
+    per ruling, not per judge), and a tick on the judge's bar marks the court's share.</p>
+  <ul>
+    <li>A judge is said to have voted one way "more often" or "less often" than the court only when a 95% confidence interval
+      (Wilson) around the judge's share leaves out the court's share. Otherwise the judge is "within the court's range".</li>
+    <li>Judges with fewer than 10 votes on the issue are shown in grey and not compared.</li>
+    <li>With about 20 judges and 70 issues, some differences will appear by chance. Read them together with the cases behind
+      them (click any row).</li>
+    <li>A judge's own votes are part of the court's figure, which makes differences slightly harder to find, not easier.</li>
+  </ul>
+
+  <h2 id="other">Sitting together, authorship, timing, Rule 36</h2>
+  <ul>
+    <li><strong>Sitting together</strong>: the number of decisions (written opinions and Rule 36 judgments) whose panel included
+      both judges, or all three. Consolidated appeals decided together count once. Two-judge panels (when a judge died or
+      recused) count for pairs, not for all three.</li>
+    <li><strong>Wrote the opinion</strong>: of the written panel opinions a judge sat on, the share the judge signed. The court
+      figure is signed opinions divided by panel seats, which is a little under one in three because of per curiam opinions.</li>
+    <li><strong>Days to opinion</strong>: the median number of days from argument to a signed opinion the judge wrote, shown
+      separately for precedential and nonprecedential opinions, only for cases with a known argument date.</li>
+    <li><strong>Rule 36 rate</strong>: Rule 36 judgments as a share of all decisions in cases the judge sat on. When a case is
+      selected, only cases from the same origin and with the same argued / on-the-briefs status are counted.</li>
+  </ul>
+
+  <h2 id="excluded">What is left out</h2>
+  <ul>
+    <li><strong>En banc decisions</strong>: kept out of judge statistics (a separate group).</li>
+    <li><strong>Revised opinions</strong>: when the court reissues a revised or corrected opinion, the original is replaced
+      and left out.</li>
+    <li><strong>Decisions whose PDF names no panel</strong> (about 1%, mostly unsigned per curiam opinions in pro se cases and a
+      January 2019 batch of Rule 36 judgments): left out of judge statistics, but counted in whole-court figures.</li>
+    <li><strong>Pro se cases</strong>: left out by default (you can include them with the checkbox). Without this filter,
+      jurisdictional dismissals in pro se veterans, employment and Court of Federal Claims appeals would dominate those records.</li>
+    <li><strong>Judge Stark</strong>'s panels before 2022, when he sat by designation as a district judge, are in the visiting
+      group, not his Federal Circuit record.</li>
+  </ul>
+
+  <h2 id="accuracy">Accuracy check</h2>
+  <p>25 issues drawn at random from patent cases were each checked against the opinion by a person; the AI had coded all 25
+    correctly. A check of this size cannot rule out occasional errors, and other case types were not checked.</p>
+  <p>The model was chosen after a 50-case test in which two AI models coded the same opinions. The models agreed on the side
+    favored in 73 of 73 issues they both coded, and on the panel and author in 50 of 50 cases.</p>
+
+  <h2 id="limits">Known limits</h2>
+  <ul>
+    <li>AI coding has some errors. Every number links to its cases, with the AI's description and a quote, so it can be checked.</li>
+    <li>The AI sometimes splits one ruling into two issues, or adds a minor procedural ruling another reader would skip.
+      Whether it misses issues was not separately checked.</li>
+    <li>About 4% of issues fit none of the 70 types ("Other"). These are mostly non-patent claims in patent cases (trade
+      secrets, contract, antitrust) and settlement-agreement disputes.</li>
+    <li>The pro se flag does not say which side was pro se, and it counts a lawyer representing themselves as pro se.</li>
+    <li>The argument date is the date the recording was posted, which is normally, but not always, the argument date.</li>
+    <li>The panel shown on the dashboard is entered by the user. The court posts the actual panel on its daily schedule
+      about one hour before argument.</li>
+  </ul>
+
+  <h2 id="updates">Updates</h2>
+  <p>The argument calendar is re-read every morning. New decisions are added every week, read by the same text rules and
+    coded by the same AI model with the same instructions. If the AI coding is ever redone with a different model, the
+    dashboard will say so and name the new version.</p>
+
+  <h2 id="issues">The issue list</h2>
+  <p>The 70 issue types, in 12 groups. For each, the two outcomes the AI could record, and what the issue covers.</p>
+  <div class="scroll"><table id="issues-table"></table></div>
+</main>
+
+<footer class="wrap doc">
+  <p>Source: opinions, Rule 36 judgments, argument recordings and calendars posted by the U.S. Court of Appeals for the
+    Federal Circuit on its website. Not affiliated with the court. Not legal advice. <a href="index.html">Dashboard</a></p>
+</footer>
+<script>
+"use strict";
+(async () => {
+  let M;
+  try { M = await (await fetch("data/meta.json")).json(); } catch (e) { return; }
+  const m = M.meta;
+  const val = { ...m, issues_coded: (m.report["issues coded"] || 0).toLocaleString() };
+  for (const k of ["decisions", "opinions", "rule36", "classified"]) val[k] = m[k].toLocaleString();
+  document.querySelectorAll("[data-m]").forEach((el) => { if (val[el.dataset.m] !== undefined) el.textContent = val[el.dataset.m]; });
+  const cell = (tag, text, cls) => { const e = document.createElement(tag); e.textContent = text; if (cls) e.className = cls; return e; };
+  const row = (tag, cells) => { const tr = document.createElement("tr"); cells.forEach((c) => tr.append(c)); return tr; };
+  const sides = document.getElementById("sides-table");
+  sides.append(row("tr", [cell("th", "Case type"), cell("th", "Side A"), cell("th", "Side B")]));
+  for (const t of M.case_types) sides.append(row("tr", [cell("td", t.name), cell("td", t.side_a), cell("td", (t.side_b || "(no sides)") + (t.note ? ". " + t.note : ""))]));
+  const iss = document.getElementById("issues-table");
+  let group = null;
+  for (const i of M.issues) {
+    if (i.group !== group) {
+      group = i.group;
+      const th = cell("th", group); th.colSpan = 4;
+      iss.append(row("tr", [th]));
+    }
+    const outcomes = i.side_a_label ? `${i.side_a_label} / ${i.side_b_label}` : "either side may benefit";
+    iss.append(row("tr", [cell("td", i.code, "code"), cell("td", i.issue), cell("td", outcomes), cell("td", i.covers)]));
+  }
+})();
+</script>
+</body>
+</html>

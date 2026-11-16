@@ -9,6 +9,7 @@ number can be traced to its cases.
 
   docs/data/archive.json  one row per decision (text-rule fields) and one row per AI-coded issue
   docs/data/quotes/<code>.json  description and supporting quote per coded issue, loaded on demand
+  docs/data/meta.json  counts, side definitions and issue list, for the methodology page
 
 Rules applied here (see CLAUDE.md for the methodology):
 - Panel, author, dates, origin, precedential, pro se come from data/decisions.csv (text rules).
@@ -173,6 +174,8 @@ def main():
     }
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "archive.json").write_text(json.dumps(archive, separators=(",", ":")))
+    # small file for methodology.html: counts, side definitions and the issue list (no per-decision rows)
+    (OUT / "meta.json").write_text(json.dumps({k: archive[k] for k in ("meta", "case_types", "issues")}, separators=(",", ":")))
     qdir = OUT / "quotes"
     qdir.mkdir(exist_ok=True)
     for old in qdir.glob("*.json"):

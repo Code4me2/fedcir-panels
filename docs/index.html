@@ -10,16 +10,24 @@
 <body>
 <header class="wrap">
   <h1>Federal Circuit Panels</h1>
-  <p class="lede">Pick an argument session and the three judges on the panel. The court posts the judges' names on its
+  <p class="lede">Pick an argument session and the three judges on the panel, or try any panel without a case. The court posts
+    the judges' names on its
     <a href="https://www.cafc.uscourts.gov/home/oral-argument/daily-schedule/" target="_blank" rel="noopener">daily schedule</a>
-    about one hour before argument.</p>
+    about one hour before argument. <a href="methodology.html">How the numbers are made</a></p>
   <p class="status" id="status">Loading…</p>
   <div class="banner" id="test-banner" hidden></div>
 </header>
 
 <main class="wrap">
-  <section aria-labelledby="h-session">
-    <h2 id="h-session">1. Session</h2>
+  <fieldset class="mode">
+    <legend class="sr-only">What to look at</legend>
+    <label><input type="radio" name="mode" id="mode-session" checked> A case on the argument calendar</label>
+    <label><input type="radio" name="mode" id="mode-free"> Any panel (no case)</label>
+  </fieldset>
+  <p class="hint" id="free-note" hidden>Choose any three judges, a case type and an issue. Nothing here is tied to a scheduled argument.</p>
+
+  <section aria-labelledby="h-session" id="session-section">
+    <h2 id="h-session">Session</h2>
     <div class="controls">
       <label>Date <select id="date"></select></label>
       <label>Session <select id="session"></select></label>
@@ -29,14 +37,14 @@
   </section>
 
   <section aria-labelledby="h-panel">
-    <h2 id="h-panel">2. Panel</h2>
+    <h2 id="h-panel">Panel</h2>
     <p class="notice" id="panel-source"></p>
     <div class="controls" id="judge-pickers"></div>
     <div id="together"></div>
   </section>
 
   <section aria-labelledby="h-judges">
-    <h2 id="h-judges">3. Judges</h2>
+    <h2 id="h-judges">Judges</h2>
     <div class="controls">
       <label>Decisions from <select id="since"></select></label>
       <label class="check"><input type="checkbox" id="pro-se" checked> Leave out cases with a pro se party</label>
@@ -46,7 +54,7 @@
   </section>
 
   <section aria-labelledby="h-issue">
-    <h2 id="h-issue">4. Votes on an issue</h2>
+    <h2 id="h-issue">Votes on an issue</h2>
     <p class="hint" id="case-line">No case selected: choose the case type yourself, or click a case above.</p>
     <div class="controls">
       <label>Case type <select id="ctype"></select></label>
@@ -63,13 +71,17 @@
 
   <section aria-labelledby="h-method" class="method">
     <h2 id="h-method">How the numbers are made</h2>
-    <div id="method"></div>
+    <p>Panels, authors and dates are read from the court's opinions by fixed text rules. Issues and which side each ruling
+      favored were coded by AI and checked against a random sample. Rule 36 judgments, en banc decisions and (by default)
+      pro se cases are left out of the vote counts. <a href="methodology.html">Read the full methodology</a>, including the
+      list of issues, how sides are defined and the known limits.</p>
   </section>
 </main>
 
 <footer class="wrap">
   <p>Source: opinions, Rule 36 judgments, argument recordings and calendars posted by the U.S. Court of Appeals for the
-    Federal Circuit on its website. Not affiliated with the court. Not legal advice.</p>
+    Federal Circuit on its website. Not affiliated with the court. Not legal advice.
+    <a href="methodology.html">Methodology</a></p>
 </footer>
 <script src="app.js"></script>
 </body>
