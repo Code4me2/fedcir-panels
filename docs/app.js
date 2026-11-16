@@ -526,7 +526,7 @@ async function main() {
   }
   jkey = A.judges.map((n) => n.endsWith("(visiting)") ? VIS : n);
   for (const i of A.issues) issueByCode[i.code] = i;
-  $("status").textContent = `Decisions through ${A.meta.latest_decision} · Calendar read ${CAL.read}`;
+  $("status").textContent = `Decisions through ${A.meta.latest_decision}`;
   if (A.meta.test_data) { const b = $("test-banner"); b.hidden = false; b.textContent = "Development build: issue statistics use only the 50-case test sample. Do not rely on them."; }
   const years = []; for (let y = +A.meta.latest_decision.slice(0, 4); y >= 2015; y--) years.push(y);
   $("since").replaceChildren(...years.map((y) => h("option", { value: y, selected: y === S.y }, y)));
