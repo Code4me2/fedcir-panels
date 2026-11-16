@@ -141,8 +141,10 @@ function renderCalendar() {
       h("td", { class: "muted nowrap" }, c.argued ? "argued" : "on the briefs")));
   }
   t.append(tb);
-  $("cal-source").textContent = CAL.calendars.map((c) => c.source.split("/").pop() + (c.revised ? ` (revised ${c.revised})` : "") +
-    (c.archived ? " (no longer posted by the court; kept as last read)" : "")).join(", ") + `; read ${CAL.read}.`;
+  // Months the court has taken down are kept as last read (fetch_calendar.py); say so only when that happens.
+  const gone = CAL.calendars.filter((c) => c.archived).map((c) => c.source.split("/").pop().replace(/^PublicCalendar-|\.pdf$/g, "").replace(/(\d{4})$/, " $1"));
+  $("cal-source").textContent = `Last updated: ${CAL.read}.` +
+    (gone.length ? ` ${gone.join(", ")}: no longer posted by the court; kept as last read.` : "");
 }
 
 /* Case type guessed from the calendar's origin code, using the most common AI case type for that origin. */
@@ -524,7 +526,7 @@ async function main() {
   }
   jkey = A.judges.map((n) => n.endsWith("(visiting)") ? VIS : n);
   for (const i of A.issues) issueByCode[i.code] = i;
-  $("status").textContent = `Decisions through ${A.meta.latest_decision} · calendar read ${CAL.read} · ${A.meta.classification}`;
+  $("status").textContent = `Decisions through ${A.meta.latest_decision} · Calendar read ${CAL.read}`;
   if (A.meta.test_data) { const b = $("test-banner"); b.hidden = false; b.textContent = "Development build: issue statistics use only the 50-case test sample. Do not rely on them."; }
   const years = []; for (let y = +A.meta.latest_decision.slice(0, 4); y >= 2015; y--) years.push(y);
   $("since").replaceChildren(...years.map((y) => h("option", { value: y, selected: y === S.y }, y)));
