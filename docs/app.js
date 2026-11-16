@@ -363,13 +363,38 @@ function labelsFor(code, ct) {
   if (!i || code.startsWith("X") || !i.side_a_label) return [`for ${sa.toLowerCase()}`, `for ${sb.toLowerCase()}`];
   return [`${i.side_a_label} (${sa.toLowerCase()})`, `${i.side_b_label} (${sb.toLowerCase()})`];
 }
+/* Case types whose sides mean the same thing (patent owner vs a private challenger), so their rulings can be pooled
+   when "Only ..." is unticked. Every other case type is always shown on its own: ex parte appeals (applicant vs PTO)
+   are a different contest, and pooling procedure (X) issues across, e.g., patent and veterans cases would mix sides. */
+const POOLABLE = (name) => name.startsWith("Patent: district") || name.startsWith("Patent: PTAB");
+const POOL_SHORT = (name) => name.startsWith("Patent: district") ? "district court and ITC" : "PTAB trial";
+function poolable(ct) { return ct >= 0 && ct < A.case_types.length && POOLABLE(A.case_types[ct].name); }
+/* The case types counted for the selected case type under the current setting. */
+function ctSet() {
+  if (S.st || !poolable(S.ct)) return [S.ct];
+  return A.case_types.map((t, i) => i).filter(poolable);
+}
+function renderPoolBox() {
+  const can = poolable(S.ct);
+  $("same-type-label").style.display = can ? "" : "none";
+  if (!can) return;
+  const other = A.case_types.map((t, i) => i).filter((i) => poolable(i) && i !== S.ct).map((i) => POOL_SHORT(A.case_types[i].name));
+  $("same-type-text").textContent = `Only ${POOL_SHORT(A.case_types[S.ct].name)} cases (untick to add ${other.join(" and ")} cases)`;
+  $("same-type").checked = !!S.st;
+}
+function scopeText() {
+  const cts = ctSet();
+  return cts.length > 1 ? "district court, ITC, and PTAB trial cases combined" : `${A.case_types[S.ct].name} only`;
+}
 function renderIssuePickers() {
   const cs = $("ctype");
   if (S.ct < 0 || S.ct >= A.case_types.length) S.ct = 0;
   cs.replaceChildren(...A.case_types.map((t, i) => h("option", { value: i, selected: i === S.ct }, t.name)));
+  renderPoolBox();
   const letter = GROUP_LETTER(A.case_types[S.ct].name);
   const counts = {};
-  for (const r of A.rulings) if (r[R.ct] === S.ct) counts[r[R.code]] = (counts[r[R.code]] || 0) + 1;
+  const cts = ctSet();
+  for (const r of A.rulings) if (cts.includes(r[R.ct])) counts[r[R.code]] = (counts[r[R.code]] || 0) + 1;
   const codes = A.issues.filter((i) => (letter && i.code[0] === letter) || i.code[0] === "X");
   if (!codes.some((i) => i.code === S.i)) {
     const best = codes.map((i) => i.code).sort((a, b) => (counts[b] || 0) - (counts[a] || 0))[0];
@@ -380,7 +405,7 @@ function renderIssuePickers() {
     codes.filter((i) => i.group === g).map((i) => h("option", { value: i.code, selected: i.code === S.i },
       `${i.code} · ${i.issue} — ${counts[i.code] || 0} rulings`)))));
   const iss = issueByCode[S.i];
-  $("issue-covers").textContent = iss ? `${iss.issue}: ${iss.covers}` : "";
+  $("issue-covers").textContent = iss ? `${iss.issue}: ${iss.covers} Counted in: ${scopeText()}.` : "";
   const c = currentCase(), sess = currentSession();
   $("case-line").textContent = c ? `Case: ${c.appeal} ${c.name} (${c.origin}, ${c.argued ? "argued" : "on the briefs"}), Panel ${sess.panel}. ` +
     "The case type is a guess from the origin and case name; change it if it is wrong." +
@@ -438,7 +463,8 @@ function voteRow(label, t, court, isCourt, key, labels, which) {
     h("td", { class: "small signal" }, signal));
 }
 function issueRulings(codes) {
-  return A.rulings.filter((r) => codes.includes(r[R.code]) && (!S.st || r[R.ct] === S.ct) && judgeDecision(A.decisions[r[R.d]], true));
+  const cts = ctSet();
+  return A.rulings.filter((r) => codes.includes(r[R.code]) && cts.includes(r[R.ct]) && judgeDecision(A.decisions[r[R.d]], true));
 }
 function voteTable(el, codes, labels, which) {
   const rs = issueRulings(codes);
@@ -462,7 +488,7 @@ function renderVotes() {
   voteTable($("votes"), [S.i], labels, "issue");
   const iss = issueByCode[S.i];
   const gcodes = A.issues.filter((i) => i.group === iss.group).map((i) => i.code);
-  $("group-title").textContent = `All "${iss.group}" issues together (${gcodes.length} codes), by side`;
+  $("group-title").textContent = `All "${iss.group}" issues together (${gcodes.length} codes), by side – ${scopeText()}`;
   voteTable($("group-votes"), gcodes, [`for ${sa.toLowerCase()}`, `for ${sb.toLowerCase()}`], "group");
   if (drillState) renderDrill();
 }
