@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Methodology · Federal Circuit Panels</title>
-<meta name="description" content="How the Federal Circuit Panels dashboard is built: data source, text rules, AI coding of issues, how votes and sides are counted, accuracy check and known limits.">
+<meta name="description" content="How the Federal Circuit Panels dashboard is built: data source, text rules, AI coding of issues, how votes and sides are counted, accuracy check, and known limits.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
     <li><a href="#sides">Sides</a></li>
     <li><a href="#votes">How votes are counted</a></li>
     <li><a href="#compare">Comparing a judge with the court</a></li>
-    <li><a href="#other">Sitting together, authorship, timing, Rule 36</a></li>
+    <li><a href="#other">Sitting together, authorship, timing, and Rule 36</a></li>
     <li><a href="#excluded">What is left out</a></li>
     <li><a href="#accuracy">Accuracy check</a></li>
     <li><a href="#limits">Known limits</a></li>
@@ -43,7 +43,7 @@
   <ul>
     <li><strong>Panel</strong> (the "Before …" line), <strong>author</strong> ("Opinion for the court filed by …", or per curiam),
       and <strong>separate opinions</strong>.</li>
-    <li><strong>Decision date</strong>, <strong>precedential status</strong> and <strong>origin</strong> (district court, PTAB, ITC,
+    <li><strong>Decision date</strong>, <strong>precedential status</strong>, and <strong>origin</strong> (district court, PTAB, ITC,
       MSPB, Court of Federal Claims, Veterans Court, and so on).</li>
     <li><strong>Pro se parties</strong>, from the list of counsel at the top of the opinion.</li>
     <li><strong>Argument date</strong>: the date the court posted the argument recording, matched by appeal number. Recordings
@@ -58,7 +58,7 @@
     (<span data-m="classification">…</span>). From a fixed list of 70 issue types (<a href="#issues">listed below</a>),
     it recorded every issue the court actually decided and, for each one:</p>
   <ul>
-    <li>which side the ruling favored, or "mixed" (some claims, patents or counts each way), or "unclear";</li>
+    <li>which side the ruling favored, or "mixed" (some claims, patents, or counts each way), or "unclear";</li>
     <li>the court's disposition (affirmed, reversed, vacated, and so on);</li>
     <li>which judges, if any, dissented on that issue;</li>
     <li>a one-sentence description and a supporting quote from the opinion, shown when you click a row on the dashboard.</li>
@@ -107,7 +107,7 @@
     <li>A judge's own votes are part of the court's figure, which makes differences slightly harder to find, not easier.</li>
   </ul>
 
-  <h2 id="other">Sitting together, authorship, timing, Rule 36</h2>
+  <h2 id="other">Sitting together, authorship, timing, and Rule 36</h2>
   <ul>
     <li><strong>Sitting together</strong>: the number of decisions (written opinions and Rule 36 judgments) whose panel included
       both judges, or all three. Consolidated appeals decided together count once. Two-judge panels (when a judge died or
@@ -128,7 +128,7 @@
     <li><strong>Decisions whose PDF names no panel</strong> (about 1%, mostly unsigned per curiam opinions in pro se cases and a
       January 2019 batch of Rule 36 judgments): left out of judge statistics, but counted in whole-court figures.</li>
     <li><strong>Pro se cases</strong>: left out by default (you can include them with the checkbox). Without this filter,
-      jurisdictional dismissals in pro se veterans, employment and Court of Federal Claims appeals would dominate those records.</li>
+      jurisdictional dismissals in pro se veterans, employment, and Court of Federal Claims appeals would dominate those records.</li>
     <li><strong>Judge Stark</strong>'s panels before 2022, when he sat by designation as a district judge, are in the visiting
       group, not his Federal Circuit record.</li>
   </ul>
@@ -145,7 +145,7 @@
     <li>The AI sometimes splits one ruling into two issues, or adds a minor procedural ruling another reader would skip.
       Whether it misses issues was not separately checked.</li>
     <li>About 4% of issues fit none of the 70 types ("Other"). These are mostly non-patent claims in patent cases (trade
-      secrets, contract, antitrust) and settlement-agreement disputes.</li>
+      secrets, contract, and antitrust) and settlement-agreement disputes.</li>
     <li>The pro se flag does not say which side was pro se, and it counts a lawyer representing themselves as pro se.</li>
     <li>The argument date is the date the recording was posted, which is normally, but not always, the argument date.</li>
     <li>The panel shown on the dashboard is entered by the user. The court posts the actual panel on its daily schedule
@@ -163,7 +163,7 @@
 </main>
 
 <footer class="wrap doc">
-  <p>Source: opinions, Rule 36 judgments, argument recordings and calendars posted by the U.S. Court of Appeals for the
+  <p>Source: opinions, Rule 36 judgments, argument recordings, and calendars posted by the U.S. Court of Appeals for the
     Federal Circuit on its website. Not affiliated with the court. Not legal advice. <a href="index.html">Dashboard</a></p>
 </footer>
 <script>

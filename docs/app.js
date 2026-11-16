@@ -200,7 +200,7 @@ function renderPanelSource() {
   const el = $("panel-source");
   if (S.m === "free") {
     el.replaceChildren(h("strong", {}, "Any panel – judges chosen by you. "),
-      "Not tied to an argument session or case: try any combination of judges, case type and issue.");
+      "Not tied to an argument session or case: try any combination of judges, case type, and issue.");
     return;
   }
   if (PANEL_FROM_COURT) { el.replaceChildren(`Judges read from the court's daily schedule at ${PANEL_FROM_COURT.read}.`); return; }

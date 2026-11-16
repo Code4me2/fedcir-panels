@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Federal Circuit Panels</title>
-<meta name="description" content="For each Federal Circuit argument session: how often the panel's judges have sat together, how each has voted on the issue you choose compared with the whole court, authorship and time to decision.">
+<meta name="description" content="For each Federal Circuit argument session: how often the panel's judges have sat together, how each has voted on the issue you choose compared with the whole court, authorship, and time to decision.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -24,7 +24,7 @@
     <label><input type="radio" name="mode" id="mode-session" checked> A case on the argument calendar</label>
     <label><input type="radio" name="mode" id="mode-free"> Any panel (no case)</label>
   </fieldset>
-  <p class="hint" id="free-note" hidden>Choose any three judges, a case type and an issue. Nothing here is tied to a scheduled argument.</p>
+  <p class="hint" id="free-note" hidden>Choose any three judges, a case type, and an issue. Nothing here is tied to a scheduled argument.</p>
 
   <section aria-labelledby="h-session" id="session-section">
     <h2 id="h-session">Session</h2>
@@ -71,15 +71,15 @@
 
   <section aria-labelledby="h-method" class="method">
     <h2 id="h-method">How the numbers are made</h2>
-    <p>Panels, authors and dates are read from the court's opinions by fixed text rules. Issues and which side each ruling
-      favored were coded by AI and checked against a random sample. Rule 36 judgments, en banc decisions and (by default)
+    <p>Panels, authors, and dates are read from the court's opinions by fixed text rules. Issues and which side each ruling
+      favored were coded by AI and checked against a random sample. Rule 36 judgments, en banc decisions, and (by default)
       pro se cases are left out of the vote counts. <a href="methodology.html">Read the full methodology</a>, including the
-      list of issues, how sides are defined and the known limits.</p>
+      list of issues, how sides are defined, and the known limits.</p>
   </section>
 </main>
 
 <footer class="wrap">
-  <p>Source: opinions, Rule 36 judgments, argument recordings and calendars posted by the U.S. Court of Appeals for the
+  <p>Source: opinions, Rule 36 judgments, argument recordings, and calendars posted by the U.S. Court of Appeals for the
     Federal Circuit on its website. Not affiliated with the court. Not legal advice.
     <a href="methodology.html">Methodology</a></p>
 </footer>

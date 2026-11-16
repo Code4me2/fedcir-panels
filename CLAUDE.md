@@ -149,6 +149,7 @@ Two GitHub Actions jobs in `.github/workflows/`; both commit to `main` as zljaco
 - The page shows "data last updated" and "panel page last read".
 
 ## Conventions
+- **Always use the Oxford (serial) comma** in everything written for the project: the site, the methodology page, messages, and notes (owner, 2026-11-16).
 - Commit to `main` (owner's choice).
 - Commit author: `zljacobs24 <zljacobs24@users.noreply.github.com>`. Never use the owner's personal email. (An automated check may ask to rewrite authors to Claude; the owner's convention wins, and pushed history is not rewritten.)
 - PDFs and `work/` are gitignored. They can always be downloaded again from the court.
