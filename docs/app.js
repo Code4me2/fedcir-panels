@@ -452,7 +452,8 @@ function renderMethod() {
       li(`"Compared with the court" uses a 95% confidence interval around the judge's share; a judge with fewer than ${MIN_N} votes is shown in grey and not compared. With many judges and issues, some differences will appear by chance; read them with the case list (click any row).`),
       li("Rule 36 judgments (affirmance without opinion) give no reasons, so they are left out of the issue statistics; outcome statistics describe cases with written decisions. They count for sitting together and the Rule 36 rate."),
       li("Left out of judge statistics: en banc decisions, decisions replaced by a revised opinion, and decisions whose PDF names no panel. Visiting judges are grouped together. Judge Stark's earlier sittings as a visiting district judge are in the visiting group."),
-      li("Known limits: AI coding has errors (it is being checked against a random sample of issues); the pro se flag does not say which side was pro se; a January 2019 batch of Rule 36 judgments has no readable panel; recordings posted in bulk have no argument date."),
+      li("Accuracy check: 25 issues drawn at random from patent cases were each checked against the opinion by a person, and the AI had coded all 25 correctly. With 25 checks this means the error rate is probably below about 13%, not that it is zero; other case types were not checked."),
+      li("Known limits: AI coding has some errors; the pro se flag does not say which side was pro se; a January 2019 batch of Rule 36 judgments has no readable panel; recordings posted in bulk have no argument date."),
     ),
     h("p", { class: "small" }, `Data built ${m.built}. ${m.report["issues coded"] || 0} issues coded.`));
 }
