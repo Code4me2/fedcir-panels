@@ -18,7 +18,7 @@ let A, CAL;                 // archive, calendar
 let jkey = [];              // judge index -> grouping key (visiting judges share one key)
 let issueByCode = {};
 const quoteCache = {};
-const S = { m: "session", date: "", s: "", j: ["", "", ""], a: "", ct: -1, i: "", y: 2015, ps: 1, st: 1 };
+const S = { m: "session", date: "", s: "", j: ["", "", ""], a: "", ct: -1, i: "", y: 2015, ps: 1 };
 let drillState = null;
 
 /* ---------- small helpers ---------- */
@@ -79,12 +79,11 @@ function readHash() {
   if (p.get("i")) S.i = p.get("i");
   if (p.get("y")) S.y = +p.get("y");
   if (p.get("ps")) S.ps = +p.get("ps");
-  if (p.get("st")) S.st = +p.get("st");
 }
 function writeHash() {
   const free = S.m === "free";   // "any panel" links carry no session or case
-  const p = new URLSearchParams(free ? { m: "free", j: S.j.join(","), ct: S.ct, i: S.i, y: S.y, ps: S.ps, st: S.st }
-    : { date: S.date, s: S.s, j: S.j.join(","), a: S.a, ct: S.ct, i: S.i, y: S.y, ps: S.ps, st: S.st });
+  const p = new URLSearchParams(free ? { m: "free", j: S.j.join(","), ct: S.ct, i: S.i, y: S.y, ps: S.ps }
+    : { date: S.date, s: S.s, j: S.j.join(","), a: S.a, ct: S.ct, i: S.i, y: S.y, ps: S.ps });
   history.replaceState(null, "", "#" + p.toString());
   // "Report a problem" carries the current view, so a report can say exactly what the person was looking at
   const rep = document.getElementById("nav-report");
@@ -366,34 +365,14 @@ function labelsFor(code, ct) {
   if (!i || code.startsWith("X") || !i.side_a_label) return [`for ${sa.toLowerCase()}`, `for ${sb.toLowerCase()}`];
   return [`${i.side_a_label} (${sa.toLowerCase()})`, `${i.side_b_label} (${sb.toLowerCase()})`];
 }
-/* Case types whose sides mean the same thing (patent owner vs a private challenger), so their rulings can be pooled
-   when "Only ..." is unticked. Every other case type is always shown on its own: ex parte appeals (applicant vs PTO)
-   are a different contest, and pooling procedure (X) issues across, e.g., patent and veterans cases would mix sides. */
-const POOLABLE = (name) => name.startsWith("Patent: district") || name.startsWith("Patent: PTAB");
-const POOL_SHORT = (name) => name.startsWith("Patent: district") ? "district court and ITC" : "PTAB trial";
-function poolable(ct) { return ct >= 0 && ct < A.case_types.length && POOLABLE(A.case_types[ct].name); }
-/* The case types counted for the selected case type under the current setting. */
-function ctSet() {
-  if (S.st || !poolable(S.ct)) return [S.ct];
-  return A.case_types.map((t, i) => i).filter(poolable);
-}
-function renderPoolBox() {
-  const can = poolable(S.ct);
-  $("same-type-label").style.display = can ? "" : "none";
-  if (!can) return;
-  const other = A.case_types.map((t, i) => i).filter((i) => poolable(i) && i !== S.ct).map((i) => POOL_SHORT(A.case_types[i].name));
-  $("same-type-text").textContent = `Only ${POOL_SHORT(A.case_types[S.ct].name)} cases (untick to add ${other.join(" and ")} cases)`;
-  $("same-type").checked = !!S.st;
-}
-function scopeText() {
-  const cts = ctSet();
-  return cts.length > 1 ? "district court, ITC, and PTAB trial cases combined" : `${A.case_types[S.ct].name} only`;
-}
+/* Issue votes count only the selected case type (forum matching). To see another forum, the user switches the
+   case type. (A checkbox that combined district court/ITC with PTAB trials was removed 2026-11-16 as confusing.) */
+function ctSet() { return [S.ct]; }
+function scopeText() { return `${A.case_types[S.ct].name} only`; }
 function renderIssuePickers() {
   const cs = $("ctype");
   if (S.ct < 0 || S.ct >= A.case_types.length) S.ct = 0;
   cs.replaceChildren(...A.case_types.map((t, i) => h("option", { value: i, selected: i === S.ct }, t.name)));
-  renderPoolBox();
   const letter = GROUP_LETTER(A.case_types[S.ct].name);
   const counts = {};
   const cts = ctSet();
@@ -549,7 +528,7 @@ async function main() {
   if (A.meta.test_data) { const b = $("test-banner"); b.hidden = false; b.textContent = "Development build: issue statistics use only the 50-case test sample. Do not rely on them."; }
   const years = []; for (let y = +A.meta.latest_decision.slice(0, 4); y >= 2015; y--) years.push(y);
   $("since").replaceChildren(...years.map((y) => h("option", { value: y, selected: y === S.y }, y)));
-  $("pro-se").checked = !!S.ps; $("same-type").checked = !!S.st;
+  $("pro-se").checked = !!S.ps;
   const setMode = (m) => { S.m = m; drillState = null; renderAll(); window.scrollTo({ top: 0 }); };
   $("mode-session").onchange = () => setMode("session");
   $("mode-free").onchange = () => setMode("free");
@@ -557,8 +536,7 @@ async function main() {
   $("session").onchange = (e) => { clearAutofill(); S.s = e.target.value; S.a = ""; drillState = null; renderAll(); };
   $("since").onchange = (e) => { S.y = +e.target.value; renderAll(); };
   $("pro-se").onchange = (e) => { S.ps = e.target.checked ? 1 : 0; renderAll(); };
-  $("same-type").onchange = (e) => { S.st = e.target.checked ? 1 : 0; renderAll(); };
-  $("ctype").onchange = (e) => { S.ct = +e.target.value; S.i = ""; drillState = null; renderAll(); };
+  $("ctype").onchange = (e) => { S.ct = +e.target.value; drillState = null; renderAll(); };  // keeps the issue if it applies to the new case type
   $("issue").onchange = (e) => { S.i = e.target.value; drillState = null; renderAll(); };
   buildPickerOptions();
   renderAll();
