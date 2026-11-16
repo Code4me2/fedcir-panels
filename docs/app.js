@@ -139,7 +139,8 @@ function renderCalendar() {
       h("td", { class: "muted nowrap" }, c.argued ? "argued" : "on the briefs")));
   }
   t.append(tb);
-  $("cal-source").textContent = CAL.calendars.map((c) => c.source.split("/").pop() + (c.revised ? ` (revised ${c.revised})` : "")).join(", ") + `; read ${CAL.read}.`;
+  $("cal-source").textContent = CAL.calendars.map((c) => c.source.split("/").pop() + (c.revised ? ` (revised ${c.revised})` : "") +
+    (c.archived ? " (no longer posted by the court; kept as last read)" : "")).join(", ") + `; read ${CAL.read}.`;
 }
 
 /* Case type guessed from the calendar's origin code, using the most common AI case type for that origin. */
@@ -178,6 +179,45 @@ function buildPickerOptions() {
     { group: "Other", items: [[VIS, "Visiting judge (district or other court)"]] },
   ];
 }
+/* Panel known from the court's decisions: all cases in a session go to the same panel, and every decision's PDF
+   names it, so once any case in a past session is decided (on or after the session date) its panel is known.
+   Returns null, or { panels: [{ keys, names, from: [decisions] }] } (more than one panel = a judge was replaced
+   for some case, e.g. a recusal). */
+function decidedPanel(sess) {
+  if (!sess) return null;
+  const appeals = new Set(sess.cases.map((c) => c.appeal));
+  const byPanel = new Map();
+  for (const d of A.decisions) {
+    if (d[F.date] < sess.date || d[F.enbanc] || d[F.panel].length < 2) continue;
+    if (!d[F.appeals].split("; ").some((a) => appeals.has(a))) continue;
+    const id = d[F.panel].map((j) => A.judges[j]).sort().join("|");
+    if (!byPanel.has(id)) byPanel.set(id, { keys: keysOf(d), names: d[F.panel].map((j) => titleName(A.judges[j]) + (A.judges[j].endsWith("(visiting)") ? " (visiting)" : "")), from: [] });
+    byPanel.get(id).from.push(d);
+  }
+  return byPanel.size ? { panels: [...byPanel.values()] } : null;
+}
+const sameJudges = (a, b) => a.filter(Boolean).slice().sort().join("|") === b.slice().sort().join("|");
+function listNames(xs) { return xs.length < 3 ? xs.join(" and ") : xs.slice(0, -1).join(", ") + ", and " + xs[xs.length - 1]; }
+/* Fill the pickers with the decided panel when the user has not chosen judges. */
+function autofillPanel() {
+  const kp = decidedPanel(currentSession());
+  if (kp && kp.panels.length === 1 && kp.panels[0].keys.length === 3 && S.j.every((x) => !x)) S.j = kp.panels[0].keys.slice();
+}
+/* Before moving to another session, clear judges that were only the old session's decided panel. */
+function clearAutofill() {
+  const kp = decidedPanel(currentSession());
+  if (kp && kp.panels.length === 1 && sameJudges(S.j, kp.panels[0].keys)) S.j = ["", "", ""];
+}
+function panelFromDecisions() {
+  const kp = decidedPanel(currentSession());
+  return kp && kp.panels.length === 1 && sameJudges(S.j, kp.panels[0].keys) ? kp.panels[0] : null;
+}
+function decisionNote(p) {
+  const d = p.from[0], more = p.from.length - 1;
+  return `the court's decision in ${d[F.appeals].split("; ")[0]} (${d[F.r36] ? "Rule 36 judgment" : "opinion"}, ${fmtDate(d[F.date])})` +
+    (more ? ` and ${more} other decision${more > 1 ? "s" : ""} from this session` : "");
+}
+
 /* Where the judges' names came from. Until the morning panel reader exists, always the user.
    The reader will set PANEL_FROM_COURT = { read: "<time>" } for sessions whose panel it found. */
 const PANEL_FROM_COURT = null;
@@ -194,7 +234,7 @@ function panelTiming() {
   const today = todayET(), when = oneHourBefore(sess.time);
   if (sess.date > today) return `The court has not posted this panel yet: judges' names go up on its daily schedule about one hour before the session (around ${when} on ${fmtDate(sess.date)}).`;
   if (sess.date === today) return `The court posts this panel's names on its daily schedule about one hour before the session (around ${when} today).`;
-  return "This session has passed; the court's daily schedule shows only the current day's panels.";
+  return "This session has passed and none of its cases has been decided yet. The panel will be filled in from the first decision; the court's daily schedule shows only the current day's panels.";
 }
 function renderPanelSource() {
   const el = $("panel-source");
@@ -204,7 +244,17 @@ function renderPanelSource() {
     return;
   }
   if (PANEL_FROM_COURT) { el.replaceChildren(`Judges read from the court's daily schedule at ${PANEL_FROM_COURT.read}.`); return; }
-  el.replaceChildren(h("strong", {}, "Judges entered by you – not from the court. "), panelTiming());
+  const fromDec = panelFromDecisions();
+  if (fromDec) {
+    el.replaceChildren(h("strong", {}, "Panel from the court's decisions: "), `${listNames(fromDec.names)}, as named in ${decisionNote(fromDec)}.`);
+    return;
+  }
+  const kp = decidedPanel(currentSession());
+  let known = "";
+  if (kp && kp.panels.length === 1) known = ` The court's decisions in this session name the panel as ${listNames(kp.panels[0].names)}.`;
+  else if (kp) known = " The decided cases in this session name different panels (a judge may have been replaced for a case): " +
+    kp.panels.map((p) => `${listNames(p.names)} (${p.from.map((d) => d[F.appeals].split("; ")[0]).join(", ")})`).join("; ") + ".";
+  el.replaceChildren(h("strong", {}, "Judges entered by you – not from the court. "), known ? known.trim() : panelTiming());
 }
 function renderPickers() {
   renderPanelSource();
@@ -334,7 +384,7 @@ function renderIssuePickers() {
   const c = currentCase(), sess = currentSession();
   $("case-line").textContent = c ? `Case: ${c.appeal} ${c.name} (${c.origin}, ${c.argued ? "argued" : "on the briefs"}), Panel ${sess.panel}. ` +
     "The case type is a guess from the origin and case name; change it if it is wrong." +
-    (S.j.some(Boolean) && !PANEL_FROM_COURT ? " Judges: entered by you, not from the court." : "") :
+    (PANEL_FROM_COURT || !S.j.some(Boolean) ? "" : panelFromDecisions() ? " Judges: from the court's decisions in this session." : " Judges: entered by you, not from the court.") :
     (S.m === "free" ? "Any panel, no case: choose the case type and the issue." :
      "No case selected: choose the case type yourself, or click a case above.");
 }
@@ -454,7 +504,7 @@ async function renderDrill() {
 
 /* ---------- wiring ---------- */
 function renderAll() {
-  renderMode(); renderCalendar(); renderPickers(); renderTogether(); renderJudges(); renderIssuePickers(); renderVotes(); writeHash();
+  renderMode(); renderCalendar(); autofillPanel(); renderPickers(); renderTogether(); renderJudges(); renderIssuePickers(); renderVotes(); writeHash();
 }
 async function main() {
   readHash();
@@ -474,8 +524,8 @@ async function main() {
   const setMode = (m) => { S.m = m; drillState = null; renderAll(); window.scrollTo({ top: 0 }); };
   $("mode-session").onchange = () => setMode("session");
   $("mode-free").onchange = () => setMode("free");
-  $("date").onchange = (e) => { S.date = e.target.value; S.s = ""; S.a = ""; renderAll(); };
-  $("session").onchange = (e) => { S.s = e.target.value; S.a = ""; renderAll(); };
+  $("date").onchange = (e) => { clearAutofill(); S.date = e.target.value; S.s = ""; S.a = ""; drillState = null; renderAll(); };
+  $("session").onchange = (e) => { clearAutofill(); S.s = e.target.value; S.a = ""; drillState = null; renderAll(); };
   $("since").onchange = (e) => { S.y = +e.target.value; renderAll(); };
   $("pro-se").onchange = (e) => { S.ps = e.target.checked ? 1 : 0; renderAll(); };
   $("same-type").onchange = (e) => { S.st = e.target.checked ? 1 : 0; renderAll(); };

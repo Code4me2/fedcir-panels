@@ -7,7 +7,7 @@ Source: /home/oral-argument/scheduled-cases/ links PublicCalendar-<Month><Year>.
 sessions ("Panel B: Monday, December 7, 2026, 10:00 A.M., Courtroom 201") and, under each, one line per
 case: appeal number, origin code, case name, [argued] or [on the briefs]. Long case names wrap onto a
 second line; "Arguing Counsel:" lines (added after a session) are ignored. The court revises these PDFs,
-so this runs daily. The calendar has no judges' names: the panel is posted on the daily schedule page
+so this runs daily. Months the court no longer posts are kept as last read. The calendar has no judges' names: the panel is posted on the daily schedule page
 about one hour before argument.
 """
 import json, re, subprocess, sys, tempfile, time, urllib.request
@@ -84,10 +84,19 @@ def main():
             time.sleep(1.5)
             url = href if href.startswith("http") else BASE + href
             months.append(parse(pdf_text(get(url)), url))
-    sessions = sorted((s for m in months for s in m["sessions"]), key=lambda s: (s["date"], s["time"], s["panel"]))
-    out = {"read": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
-           "calendars": [{"source": m["source"], "revised": m["revised"], "sessions": len(m["sessions"])} for m in months],
-           "sessions": sessions}
+    sessions = [s for m in months for s in m["sessions"]]
+    calendars = [{"source": m["source"], "revised": m["revised"], "sessions": len(m["sessions"])} for m in months]
+    # The court takes old monthly calendars off its page. Keep the sessions of any month no longer posted,
+    # as last read, so past sessions stay on the dashboard. Months still posted are replaced by the new reading.
+    if OUT.exists() and len(sys.argv) == 1:
+        old = json.loads(OUT.read_text())
+        posted = {s["date"][:7] for s in sessions}
+        kept = [s for s in old["sessions"] if s["date"][:7] not in posted]
+        sessions += kept
+        new_sources = {m["source"] for m in months}
+        calendars += [c | {"archived": True} for c in old["calendars"] if c["source"] not in new_sources]
+    sessions.sort(key=lambda s: (s["date"], s["time"], s["panel"]))
+    out = {"read": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()), "calendars": calendars, "sessions": sessions}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, indent=1))
     n = sum(len(s["cases"]) for s in sessions)
