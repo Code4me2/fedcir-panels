@@ -138,7 +138,7 @@ Two GitHub Actions jobs in `.github/workflows/`; both commit to `main` as zljaco
 - **Cost:** a few cents a week (~$0.0008 per opinion at batch rates). The key is the GitHub Actions secret `FEDCIR_API_KEY` (repository Settings → Secrets and variables → Actions), separate from the cloud-environment variable used in Claude sessions.
 - `build_site_data.py` now reads the full run plus all update files; if a decision appears twice, the last successful coding is used.
 - The text archive files (`data/text/*.jsonl.gz`) are now written with a fixed gzip timestamp, so a year whose decisions didn't change is byte-identical and isn't re-committed every week.
-- Local test 2026-11-16 (`update.py --dry-run`): sitemap 29,410 URLs (1 new), the new opinion (Traxcell v. Cellco Partnership, 25-1496) found, nothing else changed; about 3½ minutes.
+- Local test 2026-11-16 (`update.py --dry-run`): sitemap 29,410 URLs (1 new), the new opinion (Traxcell v. Cellco Partnership, 25-1496) found, nothing else changed; about 3½ minutes. First GitHub run of the calendar job (by hand, 2026-11-16): reached the court from GitHub's servers, pushed, and the push republished the site (Pages rebuilds on pushes made by the jobs, so no extra deploy step is needed).
 
 ## Planned architecture (fewest moving parts)
 - A static site on GitHub Pages, with stats precomputed into static files.
