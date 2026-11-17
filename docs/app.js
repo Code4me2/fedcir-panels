@@ -321,8 +321,13 @@ function decidedPanel(sess) {
 }
 const sameJudges = (a, b) => a.filter(Boolean).slice().sort().join("|") === b.slice().sort().join("|");
 function listNames(xs) { return xs.length < 3 ? xs.join(" and ") : xs.slice(0, -1).join(", ") + ", and " + xs[xs.length - 1]; }
-/* Fill the pickers with the decided panel when the user has not chosen judges. */
+/* Fill the pickers with the decided panel when the user has not chosen judges. Done once per session shown, so that
+   clearing the judges (Clear button, or emptying each box) is not undone at once. */
+let autofilledFor = null;
 function autofillPanel() {
+  const key = `${S.m}|${S.date}|${S.s}`;
+  if (key === autofilledFor) return;
+  autofilledFor = key;
   const kp = decidedPanel(currentSession());
   if (kp && kp.panels.length === 1 && kp.panels[0].keys.length === 3 && S.j.every((x) => !x)) S.j = kp.panels[0].keys.slice();
 }
@@ -387,7 +392,8 @@ function renderPickers() {
       h("option", { value: "" }, "— choose —"),
       pickerOptions.map((g) => h("optgroup", { label: g.group }, g.items.map(([k, t]) => h("option", { value: k, selected: S.j[i] === k }, t)))));
     return h("label", {}, `Judge ${i + 1}`, sel);
-  }));
+  }), h("button", { type: "button", class: "print-btn", disabled: !S.j.some(Boolean),
+    onclick: () => { S.j = ["", "", ""]; drillState = null; renderAll(); } }, "Clear judges"));
 }
 function renderTogether() {
   const box = $("together");
@@ -517,8 +523,6 @@ function renderIssuePickers() {
   $("issue").replaceChildren(...groups.map((g) => h("optgroup", { label: g },
     codes.filter((i) => i.group === g).map((i) => h("option", { value: i.code, selected: i.code === S.i },
       `${i.code} · ${i.issue} — ${counts[i.code] || 0} rulings`)))));
-  const iss = issueByCode[S.i];
-  $("issue-covers").textContent = iss ? `${iss.issue}: ${iss.covers} Counted in: ${scopeText()}.` : "";
   const c = currentCase(), sess = currentSession();
   $("case-line").textContent = c ? `Case: ${c.appeal} ${c.name} (${c.origin}, ${c.argued ? "argued" : "on the briefs"}), Panel ${sess.panel}. ` +
     "The case type is a guess from the origin and case name; change it if it is wrong." +
@@ -597,8 +601,7 @@ function voteTable(el, codes, labels, which) {
   el.append(tb);
 }
 /* Pre-posting view: while fewer than three judges are chosen, every judge who sat in the past year, on the selected
-   case type and issue (same columns, grey for small samples, court tick, and comparison). Clicking a row fills the
-   next empty judge picker. */
+   case type and issue (same columns, grey for small samples, court tick, and comparison). Rows are not clickable. */
 function renderAllJudges(labels) {
   const box = $("all-judges-box");
   if (S.j.filter(Boolean).length >= 3) { box.hidden = true; $("all-judges").replaceChildren(); return; }
@@ -611,14 +614,9 @@ function renderAllJudges(labels) {
   for (const k of recent) {
     const chosen = S.j.includes(k);
     tb.append(voteRow(chosen ? `${judgeLabel(k)} (chosen)` : judgeLabel(k), tally(rs, k), court, false, k, labels,
-      chosen ? null : () => addJudge(k), chosen ? "chosen" : "pick"));
+      null, chosen ? "chosen" : ""));
   }
   $("all-judges").replaceChildren(voteHead(labels), tb);
-}
-function addJudge(k) {
-  const i = S.j.findIndex((x) => !x);
-  if (i < 0 || S.j.includes(k)) return;
-  S.j[i] = k; drillState = null; renderAll();
 }
 function renderVotes() {
   const labels = labelsFor(S.i, S.ct);

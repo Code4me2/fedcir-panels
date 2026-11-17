@@ -125,13 +125,13 @@ button.link { background: none; border: 0; padding: 0; color: var(--link); font:
 .method { font-size: 14px; color: var(--text-2); }
 .method li { margin: 4px 0; }
 footer { color: var(--muted); font-size: 12px; padding: 24px 16px 40px; }
-.votes tr.pick td.who { color: var(--link); }
 .tracker tr.marked td:first-child { font-weight: 650; }
 .cases .dec-inline { display: none; }
 @media (max-width: 600px) { .cases .dec { display: none; } .cases .dec-inline { display: block; color: var(--text-2); margin-top: 2px; } }
 .tracker .mark { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 4px;
   background: var(--warn-bg); color: var(--warn-text); }
-.votes tr.chosen { cursor: default; }
+#all-judges tr[data-judge] { cursor: default; }
+#all-judges tr[data-judge]:hover { background: none; }
 .votes tr.chosen td.who { font-weight: 600; }
 @media (max-width: 600px) {
   .bar { width: 110px; }
@@ -159,6 +159,7 @@ footer { color: var(--muted); font-size: 12px; padding: 24px 16px 40px; }
 .print-btn { font: inherit; font-size: 14px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px;
   background: var(--panel); color: var(--text); cursor: pointer; }
 .print-btn:hover { background: var(--row-hi); }
+.print-btn:disabled { opacity: .5; cursor: default; }
 .print-only { display: none; }
 .mode label { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line);
   border-radius: 999px; font-size: 14px; cursor: pointer; background: var(--bg); }
@@ -203,7 +204,7 @@ a.button:hover { filter: brightness(1.1); }
   .wrap { max-width: none; padding: 0; }
   .topnav, .toolbar, #free-note, .controls, select, .method, footer, .lede, #status, #session-section, #drill, .hint,
   button { display: none !important; }
-  p#case-line, p#issue-covers { display: block !important; }
+  p#case-line { display: block !important; }
   .print-only { display: block; }
   header { padding-top: 0; }
   h1 { font-size: 16px; margin: 0; }
