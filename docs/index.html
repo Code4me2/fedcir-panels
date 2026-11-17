@@ -26,14 +26,18 @@
     about one hour before argument.</p>
   <p class="status" id="status">Loading…</p>
   <div class="banner" id="test-banner" hidden></div>
+  <div class="print-only" id="print-summary"></div>
 </header>
 
 <main class="wrap">
-  <fieldset class="mode">
-    <legend class="sr-only">What to look at</legend>
-    <label><input type="radio" name="mode" id="mode-session" checked> A case on the argument calendar</label>
-    <label><input type="radio" name="mode" id="mode-free"> Any panel (no case)</label>
-  </fieldset>
+  <div class="toolbar">
+    <fieldset class="mode">
+      <legend class="sr-only">What to look at</legend>
+      <label><input type="radio" name="mode" id="mode-session" checked> A case on the argument calendar</label>
+      <label><input type="radio" name="mode" id="mode-free"> Any panel (no case)</label>
+    </fieldset>
+    <button type="button" class="print-btn" id="print-brief">Print panel brief</button>
+  </div>
   <p class="hint" id="free-note" hidden>Choose any three judges, a case type, and an issue. Nothing here is tied to a scheduled argument.</p>
 
   <section aria-labelledby="h-session" id="session-section">
@@ -73,6 +77,12 @@
     <p class="hint" id="issue-covers"></p>
     <div class="legend" id="legend"></div>
     <div class="scroll"><table class="stats votes" id="votes"></table></div>
+    <div id="all-judges-box" hidden>
+      <h3>Every judge who sat in the past year, on this issue</h3>
+      <p class="hint">Shown until three judges are chosen, for example on argument morning before the court posts the panel.
+        Click a judge to put them in the next empty judge box above.</p>
+      <div class="scroll"><table class="stats votes" id="all-judges"></table></div>
+    </div>
     <h3 id="group-title"></h3>
     <div class="scroll"><table class="stats votes" id="group-votes"></table></div>
     <div id="drill"></div>

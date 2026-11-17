@@ -61,11 +61,24 @@ function caseTitle(n) {
     return w.charAt(0).toUpperCase() + w.slice(1);
   }).join(" ");
 }
-const shortSide = (s) => (s || "").replace(/\s*\(.*?\)\s*/g, " ").split(/ [\/,] | or /)[0].trim();
+/* Short side name for labels: the first name in the side's definition ("Agency, OPM or MSPB" -> "Agency"). Trademark
+   is spelled out, because its first name would hide that the PTO is side B in ex parte appeals. */
+const SHORT_SIDES = { Trademark: ["applicant or registrant", "opposer, petitioner, or PTO"] };
+const shortSide = (s) => (s || "").replace(/\s*\(.*?\)\s*/g, " ").split(/\s*[\/,]\s*|\s+or\s+/)[0].trim();
 const fmtDate = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
 function todayET() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
 }
+/* "2026-11-16 15:46 UTC" -> "Mon, Nov 16, 2026, 10:46 a.m. ET" (the time a file was read, shown in Eastern time) */
+function fmtStamp(s) {
+  const d = new Date(String(s || "").replace(" UTC", "Z").replace(" ", "T"));
+  if (isNaN(d)) return s || "";
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short", month: "short",
+    day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(d).map((x) => [x.type, x.value]));
+  return `${p.weekday}, ${p.month} ${p.day}, ${p.year}, ${p.hour}:${p.minute} ${/^p/i.test(p.dayPeriod) ? "p.m." : "a.m."} ET`;
+}
+/* Side names in running text: lowercase, but keep acronyms ("VA", "PTO", "OPM"). */
+const sideText = (s) => s.split(" ").map((w) => /^[A-Z]{2,}/.test(w) ? w : w.toLowerCase()).join(" ");
 
 /* ---------- state in the URL, so a view can be shared ---------- */
 function readHash() {
@@ -119,13 +132,16 @@ function renderMode() {
 }
 function renderCalendar() {
   if (S.m === "free") return;
-  const dates = [...new Set(CAL.sessions.map((s) => s.date))];
+  // Only sessions from the past 12 months, plus all upcoming ones. Older sessions stay in calendar.json but are not shown;
+  // a link to one falls back to the default date, like any unknown date.
+  const today = todayET(), yearBack = (+today.slice(0, 4) - 1) + today.slice(4);
+  const dates = [...new Set(CAL.sessions.map((s) => s.date))].filter((d) => d >= yearBack).sort();
   if (!dates.includes(S.date)) {
-    const t = todayET();
-    S.date = dates.find((d) => d >= t) || dates[dates.length - 1] || "";
+    S.date = dates.find((d) => d >= today) || dates[dates.length - 1] || "";
+    S.s = ""; S.a = "";
   }
   const ds = $("date");
-  ds.replaceChildren(...dates.map((d) => h("option", { value: d, selected: d === S.date }, fmtDate(d) + (d === todayET() ? " (today)" : ""))));
+  ds.replaceChildren(...dates.map((d) => h("option", { value: d, selected: d === S.date }, fmtDate(d) + (d === today ? " (today)" : ""))));
   const ss = sessionsOn(S.date);
   if (!ss.some((s) => s.panel === S.s)) S.s = ss.length ? ss[0].panel : "";
   $("session").replaceChildren(...ss.map((s) => h("option", { value: s.panel, selected: s.panel === S.s },
@@ -143,7 +159,7 @@ function renderCalendar() {
   t.append(tb);
   // Months the court has taken down are kept as last read (fetch_calendar.py); say so only when that happens.
   const gone = CAL.calendars.filter((c) => c.archived).map((c) => c.source.split("/").pop().replace(/^PublicCalendar-|\.pdf$/g, "").replace(/(\d{4})$/, " $1"));
-  $("cal-source").textContent = `Last updated: ${CAL.read}.` +
+  $("cal-source").textContent = `Last updated: ${fmtStamp(CAL.read)}.` +
     (gone.length ? ` ${gone.join(", ")}: no longer posted by the court; kept as last read.` : "");
 }
 
@@ -285,7 +301,7 @@ function renderTogether() {
     return h("div", { class: "tile" },
       h("div", { class: "who" }, want.length === 3 ? "All three together" : want.map(judgeLabel).join(" & ")),
       h("div", { class: "big" }, hits.length),
-      h("div", { class: "small muted" }, `decisions since ${S.y}` + (hits.length ? ` (${r36} Rule 36) · last ${last}` : "")));
+      h("div", { class: "small muted" }, `decisions since ${S.y}` + (hits.length ? ` (${r36} Rule 36) · last ${fmtDate(last)}` : "")));
   });
   box.replaceChildren(h("div", { class: "together" }, tiles),
     h("p", { class: "hint" }, "Counts decisions issued by a panel that included these judges (written opinions and Rule 36 judgments; " +
@@ -305,7 +321,7 @@ function renderJudges() {
   const seats = opinions.reduce((s, d) => s + d[F.panel].length, 0);
   const signed = opinions.filter((d) => d[F.author] >= 0);
   const courtShare = seats ? signed.length / seats : null;
-  const courtDays = (p) => median(signed.filter((d) => d[F.prec] === p && d[F.days] !== null).map((d) => d[F.days]));
+  const courtDays = (p) => signed.filter((d) => d[F.prec] === p && d[F.days] !== null).map((d) => d[F.days]);
   const r36Pool = (list) => list.filter((d) => {
     if (!c) return true;
     const okO = originSet(c.origin).includes(A.origins[d[F.origin]]);
@@ -316,38 +332,40 @@ function renderJudges() {
   const courtR36 = courtR.length ? courtR.filter((d) => d[F.r36]).length / courtR.length : null;
   const r36Label = c ? `Rule 36 rate: ${c.origin} cases ${c.argued ? "argued" : "decided on the briefs"}` : "Rule 36 rate (all cases)";
 
+  // Column names; on a phone each row becomes a card and these become the labels (data-label).
+  const cols = ["Judge", "Decisions", "Wrote the opinion", "Days to opinion: precedential", "Days to opinion: nonprecedential", r36Label];
   t.replaceChildren(h("thead", {}, h("tr", {},
-    h("th", {}, "Judge"), h("th", { class: "num" }, "Decisions"),
-    h("th", { class: "num" }, "Wrote the opinion"), h("th", { class: "num" }, "Days to opinion: precedential"),
-    h("th", { class: "num" }, "nonprecedential"), h("th", { class: "num" }, r36Label))));
+    h("th", {}, cols[0]), h("th", { class: "num" }, cols[1]), h("th", { class: "num" }, cols[2]), h("th", { class: "num" }, cols[3]),
+    h("th", { class: "num" }, "nonprecedential"), h("th", { class: "num" }, cols[5]))));
+  const cell = (i, v) => h("td", { class: i ? "num" : null, "data-label": cols[i] }, v);
+  const days = (xs) => xs.length ? `${Math.round(median(xs))} (n=${xs.length})` : "–";   // whole days
   const tb = h("tbody");
   for (const k of keys) {
     const sat = pool.filter((d) => keysOf(d).includes(k));
     const ops = sat.filter((d) => !d[F.r36]);
     const mine = ops.filter((d) => d[F.author] >= 0 && jkey[d[F.author]] === k);
-    const days = (p) => mine.filter((d) => d[F.prec] === p && d[F.days] !== null).map((d) => d[F.days]);
-    const dP = days(1), dN = days(0);
+    const myDays = (p) => mine.filter((d) => d[F.prec] === p && d[F.days] !== null).map((d) => d[F.days]);
     const rp = r36Pool(sat);
     const r36 = rp.filter((d) => d[F.r36]).length;
     tb.append(h("tr", {},
-      h("td", {}, judgeLabel(k)),
-      h("td", { class: "num" }, sat.length),
-      h("td", { class: "num" }, ops.length ? `${pct(mine.length / ops.length)} of ${ops.length}` : "–"),
-      h("td", { class: "num" }, dP.length ? `${median(dP)} (n=${dP.length})` : "–"),
-      h("td", { class: "num" }, dN.length ? `${median(dN)} (n=${dN.length})` : "–"),
-      h("td", { class: "num" }, rp.length ? `${pct(r36 / rp.length)} of ${rp.length}` : "–")));
+      cell(0, judgeLabel(k)),
+      cell(1, sat.length),
+      cell(2, ops.length ? `${pct(mine.length / ops.length)} of ${ops.length}` : "–"),
+      cell(3, days(myDays(1))),
+      cell(4, days(myDays(0))),
+      cell(5, rp.length ? `${pct(r36 / rp.length)} of ${rp.length}` : "–")));
   }
   tb.append(h("tr", { class: "court" },
-    h("td", {}, h("strong", {}, "Whole court")),
-    h("td", { class: "num" }, pool.length),
-    h("td", { class: "num" }, `${pct(courtShare)} per seat`),
-    h("td", { class: "num" }, courtDays(1) ?? "–"),
-    h("td", { class: "num" }, courtDays(0) ?? "–"),
-    h("td", { class: "num" }, pct(courtR36))));
+    cell(0, h("strong", {}, "Whole court")),
+    cell(1, pool.length),
+    cell(2, `${pct(courtShare)} per seat`),
+    cell(3, days(courtDays(1))),
+    cell(4, days(courtDays(0))),
+    cell(5, pct(courtR36))));
   t.append(tb);
   $("judges-note").textContent = (keys.length ? "" : "Choose judges above. ") +
     "Wrote the opinion = share of the written panel opinions they sat on that they signed (the rest are by colleagues or per curiam). " +
-    "Days to opinion = median days from oral argument to a signed opinion they wrote (only cases with a known argument date). " +
+    "Days to opinion = median days (rounded to whole days) from oral argument to a signed opinion they wrote (only cases with a known argument date). " +
     "Rule 36 rate = Rule 36 judgments as a share of all decisions in cases they sat on, matched to the selected case's origin and argued/on-the-briefs status." +
     (S.ps ? " Cases with a pro se party are left out." : "");
 }
@@ -359,13 +377,21 @@ const GROUP_LETTER = (name) => name.startsWith("Patent") || name.startsWith("Int
   name.startsWith("Trade") ? "R" : "";
 function sideNames(ct) {
   const t = A.case_types[ct];
+  if (SHORT_SIDES[t.name]) return SHORT_SIDES[t.name];
   return [shortSide(t.side_a) || "Side A", shortSide(t.side_b) || "Side B"];
 }
+/* An outcome label already names a side when it starts with "pro-" or "for ", has its own parenthetical
+   ("estoppel applied (for patent owner)"), or contains the side's name ("patent owner's position", "VA's reading",
+   "lower duties"); then the side is not added again in parentheses. */
+function namesSide(label, side) {
+  if (/^(pro-|for )/i.test(label) || /\(.+\)/.test(label)) return true;
+  return new RegExp("\\b" + side.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(label);
+}
 function labelsFor(code, ct) {
-  const [sa, sb] = sideNames(ct);
+  const sides = sideNames(ct);
   const i = issueByCode[code];
-  if (!i || code.startsWith("X") || !i.side_a_label) return [`for ${sa.toLowerCase()}`, `for ${sb.toLowerCase()}`];
-  return [`${i.side_a_label} (${sa.toLowerCase()})`, `${i.side_b_label} (${sb.toLowerCase()})`];
+  if (!i || code.startsWith("X") || !i.side_a_label) return sides.map((s) => `for ${sideText(s)}`);
+  return [i.side_a_label, i.side_b_label].map((l, k) => namesSide(l, sides[k]) ? l : `${l} (${sideText(sides[k])})`);
 }
 /* Issue votes count only the selected case type (forum matching). To see another forum, the user switches the
    case type. (A checkbox that combined district court/ITC with PTAB trials was removed 2026-11-16 as confusing.) */
@@ -418,7 +444,8 @@ function tally(rulings, key) {
   t.n = t.a + t.b + t.m;
   return t;
 }
-function voteRow(label, t, court, isCourt, key, labels, which) {
+/* One row of a vote table. onPick runs on click / Enter (open the cases behind the row, or add the judge to the panel). */
+function voteRow(label, t, court, isCourt, key, labels, onPick, extraClass) {
   const few = t.n < MIN_N;
   const share = (x) => t.n ? x / t.n : 0;
   const bar = h("div", { class: "bar", role: "img",
@@ -435,16 +462,23 @@ function voteRow(label, t, court, isCourt, key, labels, which) {
     else signal = "within the court's range";
   } else if (!isCourt && few) signal = t.n ? "too few votes to compare" : "";
   const disp = ["aff", "rev", "vac", "part", "dism", "other"].filter((k) => t.disp[k]).map((k) => `${t.disp[k]} ${k}`).join(" · ");
-  return h("tr", { class: [isCourt ? "court" : "", few && !isCourt ? "few" : ""].join(" ").trim() || null,
-    "data-judge": key ?? "COURT", tabindex: 0,
-    onclick: () => openDrill(which, key), onkeydown: (e) => { if (e.key === "Enter") openDrill(which, key); } },
-    h("td", {}, label, bar),
-    h("td", { class: "num" }, pct(t.n ? t.a / t.n : null)),
-    h("td", { class: "num" }, pct(t.n ? t.m / t.n : null)),
-    h("td", { class: "num" }, pct(t.n ? t.b / t.n : null)),
-    h("td", { class: "num" }, t.n + (t.u ? ` (+${t.u})` : "")),
-    h("td", { class: "small muted" }, disp),
-    h("td", { class: "small signal" }, signal));
+  const cols = voteCols(labels);
+  return h("tr", { class: [isCourt ? "court" : "", few && !isCourt ? "few" : "", extraClass || ""].join(" ").trim() || null,
+    "data-judge": key ?? "COURT", tabindex: onPick ? 0 : null,
+    onclick: onPick, onkeydown: onPick ? (e) => { if (e.key === "Enter") onPick(); } : null },
+    h("td", { class: "who" }, label, bar),
+    h("td", { class: "num", "data-label": cols[1] }, pct(t.n ? t.a / t.n : null)),
+    h("td", { class: "num", "data-label": cols[2] }, pct(t.n ? t.m / t.n : null)),
+    h("td", { class: "num", "data-label": cols[3] }, pct(t.n ? t.b / t.n : null)),
+    h("td", { class: "num", "data-label": cols[4] }, t.n + (t.u ? ` (+${t.u})` : "")),
+    h("td", { class: "small muted", "data-label": cols[5] }, disp || null),
+    h("td", { class: "small signal", "data-label": cols[6] }, signal || null));
+}
+const voteCols = (labels) => ["Judge", labels[0], "mixed", labels[1], "votes (+unclear)", "court's disposition", "compared with the court"];
+function voteHead(labels) {
+  const c = voteCols(labels);
+  return h("thead", {}, h("tr", {}, h("th", {}, c[0]), h("th", { class: "num" }, c[1]), h("th", { class: "num" }, c[2]),
+    h("th", { class: "num" }, c[3]), h("th", { class: "num" }, c[4]), h("th", {}, c[5]), h("th", {}, c[6])));
 }
 function issueRulings(codes) {
   const cts = ctSet();
@@ -453,13 +487,35 @@ function issueRulings(codes) {
 function voteTable(el, codes, labels, which) {
   const rs = issueRulings(codes);
   const court = tally(rs, null);
-  el.replaceChildren(h("thead", {}, h("tr", {},
-    h("th", {}, "Judge"), h("th", { class: "num" }, labels[0]), h("th", { class: "num" }, "mixed"),
-    h("th", { class: "num" }, labels[1]), h("th", { class: "num" }, "votes (+unclear)"), h("th", {}, "court's disposition"), h("th", {}, "compared with the court"))));
+  el.replaceChildren(voteHead(labels));
   const tb = h("tbody");
-  for (const k of [...new Set(S.j.filter(Boolean))]) tb.append(voteRow(judgeLabel(k), tally(rs, k), court, false, k, labels, which));
-  tb.append(voteRow("Whole court (rulings)", court, court, true, null, labels, which));
+  for (const k of [...new Set(S.j.filter(Boolean))]) tb.append(voteRow(judgeLabel(k), tally(rs, k), court, false, k, labels, () => openDrill(which, k)));
+  tb.append(voteRow("Whole court (rulings)", court, court, true, null, labels, () => openDrill(which, null)));
   el.append(tb);
+}
+/* Pre-posting view: while fewer than three judges are chosen, every judge who sat in the past year, on the selected
+   case type and issue (same columns, grey for small samples, court tick, and comparison). Clicking a row fills the
+   next empty judge picker. */
+function renderAllJudges(labels) {
+  const box = $("all-judges-box");
+  if (S.j.filter(Boolean).length >= 3) { box.hidden = true; $("all-judges").replaceChildren(); return; }
+  box.hidden = false;
+  const rs = issueRulings([S.i]);
+  const court = tally(rs, null);
+  const recent = (pickerOptions.find((g) => g.group === "Sat in the past year") || { items: [] }).items
+    .map(([k]) => k).sort((a, b) => judgeLabel(a).localeCompare(judgeLabel(b)));
+  const tb = h("tbody");
+  for (const k of recent) {
+    const chosen = S.j.includes(k);
+    tb.append(voteRow(chosen ? `${judgeLabel(k)} (chosen)` : judgeLabel(k), tally(rs, k), court, false, k, labels,
+      chosen ? null : () => addJudge(k), chosen ? "chosen" : "pick"));
+  }
+  $("all-judges").replaceChildren(voteHead(labels), tb);
+}
+function addJudge(k) {
+  const i = S.j.findIndex((x) => !x);
+  if (i < 0 || S.j.includes(k)) return;
+  S.j[i] = k; drillState = null; renderAll();
 }
 function renderVotes() {
   const labels = labelsFor(S.i, S.ct);
@@ -470,10 +526,11 @@ function renderVotes() {
     h("span", {}, h("i", { style: "background:var(--side-b)" }), labels[1]),
     h("span", {}, h("i", { class: "tick" }), "whole-court share"));
   voteTable($("votes"), [S.i], labels, "issue");
+  renderAllJudges(labels);
   const iss = issueByCode[S.i];
   const gcodes = A.issues.filter((i) => i.group === iss.group).map((i) => i.code);
   $("group-title").textContent = `All "${iss.group}" issues together (${gcodes.length} codes), by side – ${scopeText()}`;
-  voteTable($("group-votes"), gcodes, [`for ${sa.toLowerCase()}`, `for ${sb.toLowerCase()}`], "group");
+  voteTable($("group-votes"), gcodes, [`for ${sideText(sa)}`, `for ${sideText(sb)}`], "group");
   if (drillState) renderDrill();
 }
 
@@ -484,7 +541,7 @@ async function renderDrill() {
   if (!drillState) { box.replaceChildren(); return; }
   const iss = issueByCode[S.i];
   const codes = drillState.which === "issue" ? [S.i] : A.issues.filter((i) => i.group === iss.group).map((i) => i.code);
-  const labels = drillState.which === "issue" ? labelsFor(S.i, S.ct) : sideNames(S.ct).map((s) => `for ${s.toLowerCase()}`);
+  const labels = drillState.which === "issue" ? labelsFor(S.i, S.ct) : sideNames(S.ct).map((s) => `for ${sideText(s)}`);
   const t = tally(issueRulings(codes), drillState.key);
   const rows = t.rows.sort((x, y) => A.decisions[y.r[R.d]][F.date].localeCompare(A.decisions[x.r[R.d]][F.date]));
   const need = [...new Set(rows.slice(0, drillState.shown).map((x) => x.r[R.code]))].filter((c) => !quoteCache[c]);
@@ -496,7 +553,7 @@ async function renderDrill() {
     const q = (quoteCache[r[R.code]] || {})[idxOf.get(r)] || ["", ""];
     const outcome = f === 0 ? labels[0] : f === 1 ? labels[1] : f === 2 ? "mixed" : "other/unclear";
     return h("div", { class: "case" },
-      h("div", {}, h("span", { class: "muted nowrap" }, d[F.date] + " "), h("a", { href: d[F.pdf], target: "_blank", rel: "noopener" }, caseTitle(d[F.name])),
+      h("div", {}, h("span", { class: "muted nowrap" }, fmtDate(d[F.date]) + " "), h("a", { href: d[F.pdf], target: "_blank", rel: "noopener" }, caseTitle(d[F.name])),
         h("span", { class: "muted" }, ` (${d[F.appeals]})`),
         h("span", { class: "tag" }, r[R.code]), h("span", { class: "tag" }, d[F.prec] ? "precedential" : "nonprecedential"),
         d[F.prose] ? h("span", { class: "tag" }, "pro se") : null),
@@ -512,9 +569,31 @@ async function renderDrill() {
     h("p", {}, h("button", { class: "link", onclick: () => { drillState = null; renderDrill(); } }, "Close")));
 }
 
+/* ---------- print view: the choices made with the dropdowns, as text (shown only when printing) ---------- */
+function renderPrint() {
+  const sess = currentSession(), c = currentCase(), iss = issueByCode[S.i];
+  const js = S.j.filter(Boolean);
+  const rows = [];
+  if (S.m === "free") rows.push(["View", "Any panel (no case)"]);
+  else {
+    rows.push(["Session", sess ? `${fmtDate(sess.date)} · Panel ${sess.panel} · ${sess.time.replace("A.M.", " a.m.").replace("P.M.", " p.m.")} · Courtroom ${sess.courtroom}` : "none"]);
+    rows.push(["Case", c ? `${c.appeal} ${c.name} (${c.origin}, ${c.argued ? "argued" : "on the briefs"})` : "none selected"]);
+  }
+  rows.push(["Judges", js.length ? listNames(js.map(judgeLabel)) : "none chosen"]);
+  rows.push(["Case type", A.case_types[S.ct].name]);
+  rows.push(["Issue", iss ? `${iss.code} · ${iss.issue}` : ""]);
+  rows.push(["Decisions from", `${S.y} through ${fmtDate(A.meta.latest_decision)}`]);
+  rows.push(["Pro se cases", S.ps ? "left out" : "included"]);
+  rows.push(["This view", location.href]);
+  $("print-summary").replaceChildren(h("h2", {}, "Panel brief"),
+    h("dl", {}, rows.flatMap(([k, v]) => [h("dt", {}, k), h("dd", { class: k === "This view" ? "url" : null }, v)])),
+    h("p", { class: "small" }, `Printed ${fmtStamp(new Date().toISOString().slice(0, 16).replace("T", " ") + " UTC")}. ` +
+      "Counting rules and limits: " + new URL("methodology.html", location.href).href));
+}
+
 /* ---------- wiring ---------- */
 function renderAll() {
-  renderMode(); renderCalendar(); autofillPanel(); renderPickers(); renderTogether(); renderJudges(); renderIssuePickers(); renderVotes(); writeHash();
+  renderMode(); renderCalendar(); autofillPanel(); renderPickers(); renderTogether(); renderJudges(); renderIssuePickers(); renderVotes(); writeHash(); renderPrint();
 }
 async function main() {
   readHash();
@@ -526,7 +605,7 @@ async function main() {
   }
   jkey = A.judges.map((n) => n.endsWith("(visiting)") ? VIS : n);
   for (const i of A.issues) issueByCode[i.code] = i;
-  $("status").textContent = `Decisions through ${A.meta.latest_decision}`;
+  $("status").textContent = `Decisions through ${fmtDate(A.meta.latest_decision)}`;
   if (A.meta.test_data) { const b = $("test-banner"); b.hidden = false; b.textContent = "Development build: issue statistics use only the 50-case test sample. Do not rely on them."; }
   const years = []; for (let y = +A.meta.latest_decision.slice(0, 4); y >= 2015; y--) years.push(y);
   $("since").replaceChildren(...years.map((y) => h("option", { value: y, selected: y === S.y }, y)));
@@ -540,6 +619,8 @@ async function main() {
   $("pro-se").onchange = (e) => { S.ps = e.target.checked ? 1 : 0; renderAll(); };
   $("ctype").onchange = (e) => { S.ct = +e.target.value; drillState = null; renderAll(); };  // keeps the issue if it applies to the new case type
   $("issue").onchange = (e) => { S.i = e.target.value; drillState = null; renderAll(); };
+  $("print-brief").onclick = () => { renderPrint(); window.print(); };
+  window.addEventListener("beforeprint", renderPrint);
   buildPickerOptions();
   renderAll();
 }

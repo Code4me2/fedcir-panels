@@ -125,12 +125,36 @@ button.link { background: none; border: 0; padding: 0; color: var(--link); font:
 .method { font-size: 14px; color: var(--text-2); }
 .method li { margin: 4px 0; }
 footer { color: var(--muted); font-size: 12px; padding: 24px 16px 40px; }
+.votes tr.pick td.who { color: var(--link); }
+.votes tr.chosen { cursor: default; }
+.votes tr.chosen td.who { font-weight: 600; }
 @media (max-width: 600px) {
   .bar { width: 110px; }
   h1 { font-size: 22px; }
+  /* Judges and vote tables: each row becomes a card (name, bar, then label/value pairs), so every column,
+     including "compared with the court", is visible without scrolling sideways. Labels come from data-label. */
+  table.stats thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  table.stats, table.stats tbody, table.stats tr, table.stats td { display: block; width: 100%; }
+  table.stats tr { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin: 8px 0; }
+  table.stats tr.court { background: var(--panel); }
+  table.stats td { border: 0; padding: 2px 0; display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px; text-align: right; white-space: normal; }
+  table.stats td::before { content: attr(data-label); color: var(--text-2); font-size: 12px; font-weight: 400; text-align: left; }
+  table.stats td:first-child { display: block; text-align: left; font-weight: 600; padding-bottom: 4px; }
+  table.stats td:first-child::before { content: none; }
+  table.stats td:empty { display: none; }
+  table.stats td.signal { font-size: 13px; }
+  .votes tr.court td { background: none; }
+  .stats .bar { width: 100%; }
+  .scroll:has(> table.stats) { overflow-x: visible; }
 }
 
-.mode { border: 0; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin: 18px 0 0; }
+.mode { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.print-btn { font: inherit; font-size: 14px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--panel); color: var(--text); cursor: pointer; }
+.print-btn:hover { background: var(--row-hi); }
+.print-only { display: none; }
 .mode label { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line);
   border-radius: 999px; font-size: 14px; cursor: pointer; background: var(--bg); }
 .mode label:has(input:checked) { background: var(--row-hi); border-color: var(--link); font-weight: 600; }
@@ -160,3 +184,48 @@ footer { color: var(--muted); font-size: 12px; padding: 24px 16px 40px; }
 a.button { display: inline-block; background: var(--link); color: var(--bg); text-decoration: none; font-weight: 600;
   padding: 8px 16px; border-radius: 6px; }
 a.button:hover { filter: brightness(1.1); }
+
+/* Print view ("Print panel brief"): light colors, choices printed as text, no menus or dropdowns; aim for one page. */
+@media print {
+  :root:root:root {
+    color-scheme: light;
+    --bg: #fff; --panel: #f1f0ed; --line: #d6d4ce; --text: #000; --text-2: #3d3c39; --muted: #5f5e58; --link: #000;
+    --side-a: #2a78d6; --side-b: #eb6834; --mixed: #b8b7b0; --tick: #000; --row-hi: transparent;
+    --warn-bg: #fff3d6; --warn-text: #6b4a00;
+  }
+  @page { margin: 12mm; }
+  body { font-size: 9.5px; line-height: 1.35; background: #fff; }
+  .wrap { max-width: none; padding: 0; }
+  .topnav, .toolbar, #free-note, .controls, select, .method, footer, .lede, #status, #session-section, #drill, .hint,
+  button { display: none !important; }
+  p#case-line, p#issue-covers { display: block !important; }
+  .print-only { display: block; }
+  header { padding-top: 0; }
+  h1 { font-size: 16px; margin: 0; }
+  h2 { font-size: 12px; margin: 6px 0 2px; padding-top: 4px; }
+  h3 { font-size: 11px; margin: 8px 0 3px; }
+  #print-summary h2 { border-top: 0; margin-top: 2px; padding-top: 0; }
+  #print-summary dl { display: grid; grid-template-columns: max-content 1fr; gap: 1px 10px; margin: 2px 0 4px; }
+  #print-summary dt { font-weight: 600; }
+  #print-summary dd { margin: 0; }
+  #print-summary dd.url { word-break: break-all; }
+  table { font-size: 9px; }
+  th, td { padding: 1px 4px; }
+  th { font-size: 8px; white-space: normal; }
+  td.signal { min-width: 150px; }
+  .hint, .small, .tile .who, td.small, .lede { font-size: 9px; }
+  .scroll { overflow: visible; }
+  .bar { width: 110px; height: 7px; margin-top: 1px; }
+  .bar .tick { top: -2px; height: 12px; }
+  .together { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .tile { padding: 3px 6px; }
+  .tile .big { font-size: 13px; }
+  .notice { padding: 4px 8px; margin: 3px 0 5px; font-size: 9.5px; }
+  .legend { margin: 2px 0; font-size: 9px; }
+  p { margin: 3px 0; }
+  .notice, .tile, .bar span, .legend i, tr.court td, .banner {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  tr, .tile, .notice { break-inside: avoid; page-break-inside: avoid; }
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}

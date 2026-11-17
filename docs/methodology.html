@@ -87,7 +87,8 @@
 
   <h2 id="sides">Sides</h2>
   <p>Votes are shown by the side they favored, in the issue's own terms (for example "nonobvious (patent owner)"), never as
-    "appellant won", because either side can be the appellant. Sides are fixed for each case type:</p>
+    "appellant won", because either side can be the appellant. When the outcome's own words already name the side (for
+    example "pro-patent owner" or "VA's reading"), the side is not repeated. Sides are fixed for each case type:</p>
   <div class="scroll"><table id="sides-table"></table></div>
 
   <h2 id="votes">How votes are counted</h2>
@@ -122,7 +123,12 @@
     panel. So once any case in a past session has been decided, the dashboard fills in that session's panel from the decision
     and says which decision it came from. If decided cases in one session name different panels (a judge may have been replaced
     for a case, for example after a recusal), the dashboard lists them and fills in nothing. Until a case in the session is
-    decided, the judges are entered by the user. Sessions stay on the dashboard after the court takes its monthly calendar down.</p>
+    decided, the judges are entered by the user. Sessions stay on the dashboard after the court takes its monthly calendar down.
+    The date list shows sessions from the past 12 months and all upcoming ones; older sessions are kept in the data file but
+    not shown.</p>
+  <p>While fewer than three judges are chosen (for example on argument morning, before the court posts the panel), the
+    dashboard also lists every judge who sat in the past year, with their votes on the chosen issue, counted the same way as
+    for a panel judge. Clicking a judge adds them to the panel.</p>
 
   <h2 id="other">Sitting together, authorship, timing, and Rule 36</h2>
   <ul>
@@ -132,7 +138,9 @@
     <li><strong>Wrote the opinion</strong>: of the written panel opinions a judge sat on, the share the judge signed. The court
       figure is signed opinions divided by panel seats, which is a little under one in three because of per curiam opinions.</li>
     <li><strong>Days to opinion</strong>: the median number of days from argument to a signed opinion the judge wrote, shown
-      separately for precedential and nonprecedential opinions, only for cases with a known argument date.</li>
+      separately for precedential and nonprecedential opinions, only for cases with a known argument date, and rounded to whole
+      days. The number of opinions behind each median is shown as n, for the judges and for the whole court (all signed
+      opinions).</li>
     <li><strong>Rule 36 rate</strong>: Rule 36 judgments as a share of all decisions in cases the judge sat on. When a case is
       selected, only cases from the same origin and with the same argued / on-the-briefs status are counted.</li>
   </ul>
@@ -189,7 +197,17 @@
   let M;
   try { M = await (await fetch("data/meta.json")).json(); } catch (e) { return; }
   const m = M.meta;
-  const val = { ...m, issues_coded: (m.report["issues coded"] || 0).toLocaleString() };
+  // Dates as on the dashboard: "Tue, Nov 3, 2026"; times in Eastern time
+  const fmtDate = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+  const fmtStamp = (s) => {
+    const d = new Date(String(s || "").replace(" UTC", "Z").replace(" ", "T"));
+    if (isNaN(d)) return s || "";
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "short", month: "short",
+      day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }).formatToParts(d).map((x) => [x.type, x.value]));
+    return `${p.weekday}, ${p.month} ${p.day}, ${p.year}, ${p.hour}:${p.minute} ${/^p/i.test(p.dayPeriod) ? "p.m." : "a.m."} ET`;
+  };
+  const val = { ...m, issues_coded: (m.report["issues coded"] || 0).toLocaleString(),
+                latest_decision: fmtDate(m.latest_decision), built: fmtStamp(m.built) };
   for (const k of ["decisions", "opinions", "rule36", "classified"]) val[k] = m[k].toLocaleString();
   document.querySelectorAll("[data-m]").forEach((el) => { if (val[el.dataset.m] !== undefined) el.textContent = val[el.dataset.m]; });
   const cell = (tag, text, cls) => { const e = document.createElement(tag); e.textContent = text; if (cls) e.className = cls; return e; };
