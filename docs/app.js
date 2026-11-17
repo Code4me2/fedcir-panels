@@ -264,6 +264,9 @@ function renderTracker(sess, panel) {
       .filter(Boolean).join("; ") + ". Compare with each judge's median days from argument to a signed opinion, below.";
   box.replaceChildren(
     h("h3", {}, "Opinions in this session so far"),
+    // New decisions arrive with the weekly update, so say how current the list is, right here.
+    h("p", { class: "hint" }, h("strong", {}, `Decisions through ${fmtDate(A.meta.latest_decision)}`),
+      "; decisions issued since then are not shown yet."),
     h("p", { class: "hint" }, `Panel from the court's decisions in this session. ${plural(decided, "decision")} so far: ` +
       `${plural(kinds.signed, "signed opinion")}, ${kinds.pc} per curiam, ${kinds.r36} Rule 36. ${pendLine}`),
     h("div", { class: "scroll" }, h("table", { class: "stats tracker" },
