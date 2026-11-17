@@ -207,12 +207,12 @@ const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5
 const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
 function sinceText(sess, c, until) {
   const n = daysBetween(sess.date, until);
-  return c.argued ? `${plural(n, "day")} after argument` : `${plural(n, "day")} after the session (on the briefs)`;
+  return c.argued ? `${plural(n, "day")} after argument` : `${plural(n, "day")} after the session`;
 }
 function decisionText(sess, c) {
   const d = caseDecision(sess, c);
   if (!d) return h("span", {}, h("strong", {}, "Pending"), ` · ${c.argued ? plural(daysBetween(sess.date, todayET()), "day") + " since argument"
-    : plural(daysBetween(sess.date, todayET()), "day") + " since the session (on the briefs)"}`);
+    : plural(daysBetween(sess.date, todayET()), "day") + " since the session"}`);
   const kind = d[F.r36] ? "Rule 36 judgment (no author)" : d[F.author] === -1 ? "Per curiam opinion (no author)"
     : d[F.author] < 0 ? "Opinion (author not read)" : `Opinion by ${titleName(A.judges[d[F.author]])}`;
   return `${kind} · ${fmtDate(d[F.date])} · ${sinceText(sess, c, d[F.date])}`;
