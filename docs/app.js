@@ -270,11 +270,11 @@ function renderTracker(sess, panel) {
       h("thead", {}, h("tr", {}, h("th", {}, cols[0]), h("th", { class: "num" }, "Signed opinions so far"),
         h("th", { class: "num" }, "Days to opinion: precedential"), h("th", { class: "num" }, "nonprecedential"), h("th", {}, mark ? "Prediction from past sessions" : ""))),
       tb)),
-    mark ? h("p", { class: "notice" }, h("strong", {}, "A prediction, not a guarantee. "),
-      "In past sessions, the court has usually spread signed opinions across the three judges, so a judge who has written fewer " +
-      "of this session's opinions has more often written the next one. That is a pattern in the court's past decisions, not a " +
-      "rule: any of the three judges may write any opinion, and a pending case may end as a Rule 36 judgment or an unsigned per " +
-      "curiam opinion, which have no author.") :
+    mark ? h("p", { class: "notice" }, h("strong", {}, "Not a guarantee. "),
+      "In past sessions, the court has spread signed opinions across the three judges, so a judge who has written fewer " +
+      "of this session’s opinions has more often written the next one. This pattern is informative, but not a rule: any " +
+      "of the three judges may write any opinion, and a pending case may end as a Rule 36 judgment or an unsigned per curiam " +
+      "opinion, which have no author.") :
     pending ? h("p", { class: "hint" }, kinds.signed ? "No judge is marked: all three have written the same number of this session's signed opinions so far."
       : "No judge is marked: no signed opinion from this session has been issued yet.") : null,
     h("p", { class: "hint" }, "Rule 36 judgments and per curiam opinions have no author, so they count for no judge. A judge replaced for a " +
