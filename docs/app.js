@@ -147,16 +147,22 @@ function renderCalendar() {
   $("session").replaceChildren(...ss.map((s) => h("option", { value: s.panel, selected: s.panel === S.s },
     `Panel ${s.panel} · ${s.time.replace("A.M.", " a.m.").replace("P.M.", " p.m.")} · Courtroom ${s.courtroom} (${s.cases.length} cases)`)));
   const sess = currentSession();
+  const panel = knownPanel(sess);
   const t = $("cases");
-  t.replaceChildren(h("thead", {}, h("tr", {}, h("th", {}, "Appeal"), h("th", {}, "From"), h("th", {}, "Case"), h("th", {}, "Argument"))));
+  t.replaceChildren(h("thead", {}, h("tr", {}, h("th", {}, "Appeal"), h("th", {}, "From"), h("th", {}, "Case"), h("th", {}, "Argument"),
+    panel ? h("th", { class: "dec" }, "Decision") : null)));
   const tb = h("tbody");
   for (const c of sess ? sess.cases : []) {
     tb.append(h("tr", { "data-appeal": c.appeal, class: c.appeal === S.a ? "selected" : null, tabindex: 0,
       onclick: () => selectCase(c), onkeydown: (e) => { if (e.key === "Enter") selectCase(c); } },
-      h("td", { class: "nowrap" }, c.appeal), h("td", {}, c.origin), h("td", {}, c.name),
-      h("td", { class: "muted nowrap" }, c.argued ? "argued" : "on the briefs")));
+      h("td", { class: "nowrap" }, c.appeal), h("td", {}, c.origin),
+      // on a phone the Decision column is hidden and the same text shows as a line under the case name
+      h("td", {}, c.name, panel ? h("div", { class: "small dec-inline" }, decisionText(sess, c)) : null),
+      h("td", { class: "muted nowrap" }, c.argued ? "argued" : "on the briefs"),
+      panel ? h("td", { class: "small dec" }, decisionText(sess, c)) : null));
   }
   t.append(tb);
+  renderTracker(sess, panel);
   // Months the court has taken down are kept as last read (fetch_calendar.py); say so only when that happens.
   const gone = CAL.calendars.filter((c) => c.archived).map((c) => c.source.split("/").pop().replace(/^PublicCalendar-|\.pdf$/g, "").replace(/(\d{4})$/, " $1"));
   $("cal-source").textContent = `Last updated: ${fmtStamp(CAL.read)}.` +
@@ -180,6 +186,100 @@ function selectCase(c) {
   S.ct = guessCaseType(c);
   S.i = "";
   renderAll();
+}
+
+/* ---------- session authorship tracker ---------- */
+/* Shown only for calendar sessions whose panel is known. For now that means: the session's decided cases all name one
+   3-judge panel (decidedPanel). The morning panel reader will add panels read from the court's daily schedule.
+   Facts: each case decided or pending; author, date, and days from argument; signed opinions per judge so far.
+   Mark: the judges with the fewest signed opinions so far, when not all three are tied and a case is pending. The
+   court has historically spread signed opinions evenly within a session (CLAUDE.md, "Session authorship check"), so
+   this is a prediction from that pattern, never a guarantee, and the page says so in plain words, with no percentages. */
+function knownPanel(sess) {
+  const kp = decidedPanel(sess);
+  return kp && kp.panels.length === 1 && kp.panels[0].idx.length === 3 ? kp.panels[0] : null;
+}
+function caseDecision(sess, c) {
+  return A.decisions.filter((d) => d[F.date] >= sess.date && !d[F.enbanc] && !d[F.sup] && d[F.appeals].split("; ").includes(c.appeal))
+    .sort((a, b) => a[F.date].localeCompare(b[F.date]))[0] || null;
+}
+const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+function sinceText(sess, c, until) {
+  const n = daysBetween(sess.date, until);
+  return c.argued ? `${plural(n, "day")} after argument` : `${plural(n, "day")} after the session (on the briefs)`;
+}
+function decisionText(sess, c) {
+  const d = caseDecision(sess, c);
+  if (!d) return h("span", {}, h("strong", {}, "Pending"), ` · ${c.argued ? plural(daysBetween(sess.date, todayET()), "day") + " since argument"
+    : plural(daysBetween(sess.date, todayET()), "day") + " since the session (on the briefs)"}`);
+  const kind = d[F.r36] ? "Rule 36 judgment (no author)" : d[F.author] === -1 ? "Per curiam opinion (no author)"
+    : d[F.author] < 0 ? "Opinion (author not read)" : `Opinion by ${titleName(A.judges[d[F.author]])}`;
+  return `${kind} · ${fmtDate(d[F.date])} · ${sinceText(sess, c, d[F.date])}`;
+}
+/* Median days from argument to signed opinions judge k wrote, [precedential, nonprecedential]; same pool and filters
+   as the Judges table. */
+function authoredDays(k) {
+  const mine = A.decisions.filter((d) => judgeDecision(d, true) && !d[F.r36] && d[F.author] >= 0 && jkey[d[F.author]] === k && d[F.days] !== null);
+  return [1, 0].map((p) => mine.filter((d) => d[F.prec] === p).map((d) => d[F.days]));
+}
+const fmtDays = (xs) => xs.length ? `${Math.round(median(xs))} (n=${xs.length})` : "–";   // whole days
+function renderTracker(sess, panel) {
+  const box = $("tracker");
+  if (!sess || !panel) { box.replaceChildren(); box.hidden = true; return; }
+  box.hidden = false;
+  const seen = new Set(), signed = {}, kinds = { signed: 0, pc: 0, r36: 0 };
+  let pendArgued = 0, pendBriefs = 0;
+  for (const j of panel.idx) signed[j] = 0;
+  for (const c of sess.cases) {
+    const d = caseDecision(sess, c);
+    if (!d) { if (c.argued) pendArgued++; else pendBriefs++; continue; }
+    if (seen.has(d)) continue;              // consolidated appeals decided together count once
+    seen.add(d);
+    if (d[F.r36]) kinds.r36++;
+    else if (d[F.author] >= 0 && d[F.author] in signed) { kinds.signed++; signed[d[F.author]]++; }
+    else kinds.pc++;
+  }
+  const pending = pendArgued + pendBriefs;
+  const counts = panel.idx.map((j) => signed[j]);
+  const low = Math.min(...counts);
+  const mark = pending > 0 && counts.some((n) => n !== low);
+  const days = daysBetween(sess.date, todayET());
+  const cols = ["Judge", "Signed opinions in this session", "Days to opinion: precedential", "Days to opinion: nonprecedential", "Prediction from past sessions"];
+  const tb = h("tbody");
+  panel.idx.forEach((j) => {
+    const [dP, dN] = authoredDays(jkey[j]);
+    const marked = mark && signed[j] === low;
+    tb.append(h("tr", { class: marked ? "marked" : null },
+      h("td", {}, titleName(A.judges[j]) + (A.judges[j].endsWith("(visiting)") ? " (visiting)" : "")),
+      h("td", { class: "num", "data-label": cols[1] }, signed[j]),
+      h("td", { class: "num", "data-label": cols[2] }, fmtDays(dP)),
+      h("td", { class: "num", "data-label": cols[3] }, fmtDays(dN)),
+      h("td", { "data-label": cols[4] }, marked ? h("span", { class: "mark" }, "Fewer so far: more likely to write a pending opinion") : null)));
+  });
+  const decided = kinds.signed + kinds.pc + kinds.r36;
+  const pendLine = !pending ? "All cases in this session are decided." :
+    [pendArgued ? `${pendArgued} argued ${pendArgued === 1 ? "case is" : "cases are"} pending, ${plural(days, "day")} since argument` : "",
+     pendBriefs ? `${pendBriefs} on-the-briefs ${pendBriefs === 1 ? "case is" : "cases are"} pending, ${plural(days, "day")} since the session` : ""]
+      .filter(Boolean).join("; ") + ". Compare with each judge's median days from argument to a signed opinion, below.";
+  box.replaceChildren(
+    h("h3", {}, "Opinions in this session so far"),
+    h("p", { class: "hint" }, `Panel from the court's decisions in this session. ${plural(decided, "decision")} so far: ` +
+      `${plural(kinds.signed, "signed opinion")}, ${kinds.pc} per curiam, ${kinds.r36} Rule 36. ${pendLine}`),
+    h("div", { class: "scroll" }, h("table", { class: "stats tracker" },
+      h("thead", {}, h("tr", {}, h("th", {}, cols[0]), h("th", { class: "num" }, "Signed opinions so far"),
+        h("th", { class: "num" }, "Days to opinion: precedential"), h("th", { class: "num" }, "nonprecedential"), h("th", {}, mark ? "Prediction from past sessions" : ""))),
+      tb)),
+    mark ? h("p", { class: "notice" }, h("strong", {}, "A prediction, not a guarantee. "),
+      "In past sessions, the court has usually spread signed opinions across the three judges, so a judge who has written fewer " +
+      "of this session's opinions has more often written the next one. That is a pattern in the court's past decisions, not a " +
+      "rule: any of the three judges may write any opinion, and a pending case may end as a Rule 36 judgment or an unsigned per " +
+      "curiam opinion, which have no author.") :
+    pending ? h("p", { class: "hint" }, kinds.signed ? "No judge is marked: all three have written the same number of this session's signed opinions so far."
+      : "No judge is marked: no signed opinion from this session has been issued yet.") : null,
+    h("p", { class: "hint" }, "Rule 36 judgments and per curiam opinions have no author, so they count for no judge. A judge replaced for a " +
+      "single case (for example after a recusal) is not detected until that case is decided. Days to opinion are the medians from " +
+      "the Judges table below, with the same filters (years and pro se)."));
 }
 
 /* ---------- section 2: panel pickers and sit-together ---------- */
@@ -211,7 +311,7 @@ function decidedPanel(sess) {
     if (d[F.date] < sess.date || d[F.enbanc] || d[F.panel].length < 2) continue;
     if (!d[F.appeals].split("; ").some((a) => appeals.has(a))) continue;
     const id = d[F.panel].map((j) => A.judges[j]).sort().join("|");
-    if (!byPanel.has(id)) byPanel.set(id, { keys: keysOf(d), names: d[F.panel].map((j) => titleName(A.judges[j]) + (A.judges[j].endsWith("(visiting)") ? " (visiting)" : "")), from: [] });
+    if (!byPanel.has(id)) byPanel.set(id, { idx: d[F.panel].slice(), keys: keysOf(d), names: d[F.panel].map((j) => titleName(A.judges[j]) + (A.judges[j].endsWith("(visiting)") ? " (visiting)" : "")), from: [] });
     byPanel.get(id).from.push(d);
   }
   return byPanel.size ? { panels: [...byPanel.values()] } : null;
@@ -338,7 +438,7 @@ function renderJudges() {
     h("th", {}, cols[0]), h("th", { class: "num" }, cols[1]), h("th", { class: "num" }, cols[2]), h("th", { class: "num" }, cols[3]),
     h("th", { class: "num" }, "nonprecedential"), h("th", { class: "num" }, cols[5]))));
   const cell = (i, v) => h("td", { class: i ? "num" : null, "data-label": cols[i] }, v);
-  const days = (xs) => xs.length ? `${Math.round(median(xs))} (n=${xs.length})` : "–";   // whole days
+  const days = fmtDays;
   const tb = h("tbody");
   for (const k of keys) {
     const sat = pool.filter((d) => keysOf(d).includes(k));

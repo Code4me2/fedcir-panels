@@ -32,6 +32,7 @@
     <li><a href="#votes">How votes are counted</a></li>
     <li><a href="#compare">Comparing a judge with the court</a></li>
     <li><a href="#panels">Panels of past sessions</a></li>
+    <li><a href="#session-opinions">Opinions in a session</a></li>
     <li><a href="#other">Sitting together, authorship, timing, and Rule 36</a></li>
     <li><a href="#excluded">What is left out</a></li>
     <li><a href="#accuracy">Accuracy check</a></li>
@@ -129,6 +130,26 @@
   <p>While fewer than three judges are chosen (for example on argument morning, before the court posts the panel), the
     dashboard also lists every judge who sat in the past year, with their votes on the chosen issue, counted the same way as
     for a panel judge. Clicking a judge adds them to the panel.</p>
+
+  <h2 id="session-opinions">Opinions in a session</h2>
+  <p>For a session on the court's calendar whose panel is known (for now, from the court's decisions in that session), the
+    dashboard lists each case as decided or pending. For a decided case it shows the author (or "per curiam" or "Rule 36"), the
+    decision date, and the days since argument. For pending cases it shows the days since argument next to each judge's
+    median days to a signed opinion, from the Judges table. It also counts the signed opinions each judge has written in the
+    session so far.</p>
+  <ul>
+    <li><strong>The "fewer so far" mark is a prediction, not a guarantee.</strong> Before adding it, we checked the court's past
+      sessions since 2015: signed opinions within a session are spread across the three judges much more evenly than they
+      would be if authors were assigned at random, and the judge who had written fewer of a session's opinions usually wrote
+      the next one. So when at least one case is pending and the judges have not all written the same number, the judges with
+      the fewest are marked "fewer so far". That is a pattern in the court's past decisions, not a rule: any of the three
+      judges may write any opinion.</li>
+    <li>Rule 36 judgments and per curiam opinions have no author, so they count for no judge, and a pending case may end as one
+      of them.</li>
+    <li>A judge replaced for a single case (for example after a recusal) is not detected until that case is decided.</li>
+    <li>Cases decided on the briefs belong to the same session. Their opinions count, but the past-sessions check used only
+      argued cases.</li>
+  </ul>
 
   <h2 id="other">Sitting together, authorship, timing, and Rule 36</h2>
   <ul>

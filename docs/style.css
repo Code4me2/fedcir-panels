@@ -126,6 +126,11 @@ button.link { background: none; border: 0; padding: 0; color: var(--link); font:
 .method li { margin: 4px 0; }
 footer { color: var(--muted); font-size: 12px; padding: 24px 16px 40px; }
 .votes tr.pick td.who { color: var(--link); }
+.tracker tr.marked td:first-child { font-weight: 650; }
+.cases .dec-inline { display: none; }
+@media (max-width: 600px) { .cases .dec { display: none; } .cases .dec-inline { display: block; color: var(--text-2); margin-top: 2px; } }
+.tracker .mark { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 4px;
+  background: var(--warn-bg); color: var(--warn-text); }
 .votes tr.chosen { cursor: default; }
 .votes tr.chosen td.who { font-weight: 600; }
 @media (max-width: 600px) {
