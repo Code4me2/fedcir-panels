@@ -258,7 +258,7 @@ def cmd_collect(a):
     pin, pout = PRICES[a.model]
     cost = 0.5 * (tok["input"] * pin + tok["cache_write"] * pin * 1.25 + tok["cache_read"] * pin * 0.1
                   + tok["output"] * pout) / 1e6
-    print(f"saved {out.relative_to(ROOT)}; tokens {tok}; estimated cost ${cost:.2f} (batch rate)")
+    print(f"saved {out.relative_to(ROOT)}; tokens {tok}; estimated cost ${cost:.4f} (batch rate)")
     for p in problems:
         print("PROBLEM", p)
     return {"file": out, "cost": cost, "problems": problems}
