@@ -1,10 +1,15 @@
 {
- "read": "2026-11-20 11:34 UTC",
+ "read": "2026-11-21 11:26 UTC",
  "calendars": [
   {
    "source": "https://www.cafc.uscourts.gov/wp-content/uploads/OralArguments/PublicCalendar-December2026.pdf",
    "revised": "November 13, 2026",
    "sessions": 13
+  },
+  {
+   "source": "https://www.cafc.uscourts.gov/wp-content/uploads/OralArguments/PublicCalendar-January2027.pdf",
+   "revised": "November 20, 2026",
+   "sessions": 12
   },
   {
    "source": "https://www.cafc.uscourts.gov/wp-content/uploads/OralArguments/PublicCalendar-November2026.pdf",
@@ -998,6 +1003,504 @@
      "origin": "DCT",
      "name": "Ravgen, Inc. v. Laboratory Corporation of America Holdings",
      "argued": true
+    }
+   ]
+  },
+  {
+   "panel": "A",
+   "date": "2027-01-04",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1600",
+     "origin": "PTO",
+     "name": "AliveCor, Inc. v. Apple Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1908",
+     "origin": "PTO",
+     "name": "Fendgo LLC v. Samsung Electronics Co., Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2071",
+     "origin": "DCT",
+     "name": "Lynk Labs, Inc. v. Home Depot U.S.A., Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1016",
+     "origin": "CFC",
+     "name": "Marrero v. US",
+     "argued": true
+    },
+    {
+     "appeal": "26-1675",
+     "origin": "CFC",
+     "name": "Bamba v. US",
+     "argued": false
+    },
+    {
+     "appeal": "26-1891",
+     "origin": "MSPB",
+     "name": "Turner v. USPS",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "B",
+   "date": "2027-01-04",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "24-1001",
+     "origin": "PTO",
+     "name": "In Re PSIP LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1708",
+     "origin": "PTO",
+     "name": "CAB v. Squires",
+     "argued": true
+    },
+    {
+     "appeal": "25-1962",
+     "origin": "CAVC",
+     "name": "Cain v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-2020",
+     "origin": "DCT",
+     "name": "Radius Health, Inc. v. Orbicular Pharmaceutical Technologies Private Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1446",
+     "origin": "MSPB",
+     "name": "Booth v. Air Force",
+     "argued": false
+    },
+    {
+     "appeal": "26-2019",
+     "origin": "CFC",
+     "name": "Seed v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "C",
+   "date": "2027-01-04",
+   "time": "10:00A.M.",
+   "courtroom": "203",
+   "cases": [
+    {
+     "appeal": "25-1842",
+     "origin": "DCT",
+     "name": "VideoShare, LLC v. Google LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1984",
+     "origin": "PTO",
+     "name": "In Re ACT Education Corp.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2090",
+     "origin": "CIT",
+     "name": "Giorgio Foods, Inc. v. US",
+     "argued": true
+    },
+    {
+     "appeal": "26-1178",
+     "origin": "CFC",
+     "name": "Exum v. HHS",
+     "argued": true
+    },
+    {
+     "appeal": "26-1750",
+     "origin": "CAVC",
+     "name": "Dixon v. Collins",
+     "argued": false
+    },
+    {
+     "appeal": "26-1825",
+     "origin": "MSPB",
+     "name": "Eshenaur v. MSPB",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "D",
+   "date": "2027-01-05",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1449",
+     "origin": "CAVC",
+     "name": "Dee v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1896",
+     "origin": "PTO",
+     "name": "In Re Norix Group, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1989",
+     "origin": "DCT",
+     "name": "Sanho Corp. v. Kaijet Technology International Limited, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2004",
+     "origin": "PTO",
+     "name": "CPR Certification, LLC v. CPR, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "26-1824",
+     "origin": "MSPB",
+     "name": "Dickerson-Brown v. MSPB",
+     "argued": false
+    },
+    {
+     "appeal": "26-1915",
+     "origin": "CFC",
+     "name": "Ford v. US",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "E",
+   "date": "2027-01-05",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "24-2275",
+     "origin": "DCT",
+     "name": "Omnitracs, LLC v. Platform Science, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1749",
+     "origin": "PTO",
+     "name": "Universal Electronics, Inc. v. Roku, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2034",
+     "origin": "CIT",
+     "name": "Tenaris Bay City, Inc. v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-2067",
+     "origin": "CFC",
+     "name": "Competitive Innovations, LLC v. US",
+     "argued": true
+    },
+    {
+     "appeal": "26-1174",
+     "origin": "MSPB",
+     "name": "Green v. MSPB",
+     "argued": false
+    },
+    {
+     "appeal": "26-1923",
+     "origin": "CAVC",
+     "name": "Booker v. Collins",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "F",
+   "date": "2027-01-05",
+   "time": "2:00P.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "26-1893",
+     "origin": "DCT",
+     "name": "Collision Communications, Inc. v. Samsung Electronics Co., Ltd.",
+     "argued": true
+    }
+   ]
+  },
+  {
+   "panel": "G",
+   "date": "2027-01-06",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1611",
+     "origin": "PTO",
+     "name": "Jacobsen v. Under Armour, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1859",
+     "origin": "CAVC",
+     "name": "Bennett v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1887",
+     "origin": "MSPB",
+     "name": "Conte v. Treasury",
+     "argued": true
+    },
+    {
+     "appeal": "25-1927",
+     "origin": "DCT",
+     "name": "Novartis Pharmaceuticals Corporation v. MSN Pharmaceuticals, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1867",
+     "origin": "CAVC",
+     "name": "El Malik v. Collins",
+     "argued": false
+    },
+    {
+     "appeal": "26-1931",
+     "origin": "CAVC",
+     "name": "El Malik v. Collins",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "H",
+   "date": "2027-01-06",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1480",
+     "origin": "MSPB",
+     "name": "Drenth v. DHS",
+     "argued": true
+    },
+    {
+     "appeal": "25-1724",
+     "origin": "CFC",
+     "name": "B.L. Harbert International, LLC v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-1869",
+     "origin": "DCT",
+     "name": "Schuyleman v. Barnhart Crane and Rigging Co.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1886",
+     "origin": "PTO",
+     "name": "Kaplan v. Cani",
+     "argued": true
+    },
+    {
+     "appeal": "26-1712",
+     "origin": "MSPB",
+     "name": "Salazar v. DVA",
+     "argued": false
+    },
+    {
+     "appeal": "26-1749",
+     "origin": "CAVC",
+     "name": "Philippeaux v. Collins",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "I",
+   "date": "2027-01-07",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1259",
+     "origin": "DCT",
+     "name": "Inhale, Inc. v. Gravitron, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "25-1762",
+     "origin": "CFC",
+     "name": "Colonial Chevrolet Co., Inc. v. US",
+     "argued": true
+    },
+    {
+     "appeal": "25-1866",
+     "origin": "CAVC",
+     "name": "Wilson v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "26-1077",
+     "origin": "PTO",
+     "name": "Prytime Medical Devices, Inc. v. Front Line Medical Technologies, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1763",
+     "origin": "MSPB",
+     "name": "Boarman v. SSA",
+     "argued": false
+    },
+    {
+     "appeal": "26-1841",
+     "origin": "MSPB",
+     "name": "Jimenez v. DHS",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "J",
+   "date": "2027-01-07",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1564",
+     "origin": "CAVC",
+     "name": "Lindbom v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1898",
+     "origin": "PTO",
+     "name": "LG Electronics Inc. v. Multimedia Technologies Pte. Ltd.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2039",
+     "origin": "PTO",
+     "name": "Multimedia Technologies Pte. Ltd. v. LG Electronics, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2069",
+     "origin": "DCT",
+     "name": "Ocean Semiconductor LLC v. Analog Devices, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1679",
+     "origin": "MSPB",
+     "name": "Ware v. MSPB",
+     "argued": false
+    },
+    {
+     "appeal": "26-1689",
+     "origin": "MSPB",
+     "name": "Dhaliwal v. DVA",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "K",
+   "date": "2027-01-08",
+   "time": "10:00A.M.",
+   "courtroom": "201",
+   "cases": [
+    {
+     "appeal": "25-1798",
+     "origin": "CAVC",
+     "name": "Pinn v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1890",
+     "origin": "PTO",
+     "name": "In Re Fancaster, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-2082",
+     "origin": "DCT",
+     "name": "Dasso International, Inc. v. MOSO North America, Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "26-1402",
+     "origin": "DCT",
+     "name": "Dasso International, Inc. v. MOSO International BV",
+     "argued": true
+    },
+    {
+     "appeal": "26-1257",
+     "origin": "PTO",
+     "name": "In Re Ruiz de Olano",
+     "argued": false
+    },
+    {
+     "appeal": "26-1686",
+     "origin": "MSPB",
+     "name": "Freeman v. DOJ",
+     "argued": false
+    }
+   ]
+  },
+  {
+   "panel": "L",
+   "date": "2027-01-08",
+   "time": "10:00A.M.",
+   "courtroom": "402",
+   "cases": [
+    {
+     "appeal": "25-1648",
+     "origin": "PTO",
+     "name": "Consumeron, LLC v. Maplebear Inc.",
+     "argued": true
+    },
+    {
+     "appeal": "25-1688",
+     "origin": "CAVC",
+     "name": "Northup v. Collins",
+     "argued": true
+    },
+    {
+     "appeal": "25-1956",
+     "origin": "MSPB",
+     "name": "Dornbush v. DHS",
+     "argued": true
+    },
+    {
+     "appeal": "26-1052",
+     "origin": "DCT",
+     "name": "Bambuser AB v. SITO Mobile R&D IP, LLC",
+     "argued": true
+    },
+    {
+     "appeal": "26-1812",
+     "origin": "MSPB",
+     "name": "Powell v. MSPB",
+     "argued": false
+    },
+    {
+     "appeal": "26-1864",
+     "origin": "CAVC",
+     "name": "Staadt v. Collins",
+     "argued": false
     }
    ]
   }
